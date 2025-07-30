@@ -202,7 +202,7 @@ function check_96_66(::Type{T}; GRH = false, skip_class_groups = false) where {T
   end
 end
 
-check_288_409(;GRH = false, skip_class_groups = false) = check_288_409(TestingSFC.OscarGroup; GRH = GRH, skip_class_groups)
+check_288_409(;GRH = false, skip_class_groups = false) = check_288_409(TestingSFC.default_group_type(); GRH = GRH, skip_class_groups)
 
 function check_288_409(::Type{T}; GRH = false, skip_class_groups = false) where {T}
   # needs Magma
@@ -227,7 +227,7 @@ function check_288_409(::Type{T}; GRH = false, skip_class_groups = false) where 
   end
 end
 
-check_480_266(;GRH = false, skip_class_groups = false) = check_480_266(TestingSFC.OscarGroup; GRH = GRH, skip_class_groups)
+check_480_266(;GRH = false, skip_class_groups = false) = check_480_266(TestingSFC.default_group_type(); GRH = GRH, skip_class_groups)
 
 function check_480_266(::Type{T}; GRH = false, skip_class_groups) where {T}
   # 480, 266
@@ -252,7 +252,7 @@ function check_480_266(::Type{T}; GRH = false, skip_class_groups) where {T}
   end
 end
 
-check_240_94(;GRH = false, skip_class_groups = false) = check_240_94(TestingSFC.OscarGroup; GRH = GRH, skip_class_groups)
+check_240_94(;GRH = false, skip_class_groups = false) = check_240_94(TestingSFC.default_group_type(); GRH = GRH, skip_class_groups)
 
 function check_240_94(::Type{T};GRH = false, skip_class_groups = false) where {T}
   # 240, 94
@@ -278,7 +278,7 @@ end
 
 #### Something else
 
-check_192_1022(; GRH = false) = check_192_1022(TestingSFC.OscarGroup; GRH = GRH)
+check_192_1022(; GRH = false) = check_192_1022(TestingSFC.default_group_type(); GRH = GRH)
 
 function check_192_1022(::Type{T}; GRH = false) where {T}
   G, HtoG = find_group_and_subgroup((192, 1022), (96, 204))
@@ -290,7 +290,7 @@ function check_192_1022(::Type{T}; GRH = false) where {T}
   return true
 end
 
-check_192_183(; GRH = false) = check_192_183(TestingSFC.OscarGroup; GRH = GRH)
+check_192_183(; GRH = false) = check_192_183(TestingSFC.default_group_type(); GRH = GRH)
 
 function check_192_183(::Type{T}; GRH = false) where {T}
   G, HtoG = find_group_and_subgroup((192, 183), (96, 66))
@@ -302,7 +302,15 @@ function check_192_183(::Type{T}; GRH = false) where {T}
   return true
 end
 
-check_480_962(; GRH = false) = check_480_962(TestingSFC.OscarGroup; GRH = GRH)
+check_384_580(; GRH = false) = check_384_580(TestingSFC.default_group_type(); GRH = GRH)
+
+function check_384_580(::Type{T}; GRH = false) where {T}
+  G, HtoG = find_group_and_subgroup((384, 580), (192, 183))
+  F = TestingSFC.fiber_product_from_subgroup(ZG, HtoG)
+  @vtime :SFC fl = TestingSFC.reduction(T, F; use_matrices = true, GRH = GRH)
+end
+
+check_480_962(; GRH = false) = check_480_962(TestingSFC.default_group_type(); GRH = GRH)
 
 function check_480_962(::Type{T}; GRH = false) where {T}
   G, HtoG = find_group_and_subgroup((480, 962), (96, 66))

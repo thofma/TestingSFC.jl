@@ -2,6 +2,8 @@ module MagmaExtension
 
 using TestingSFC, MagmaGroups, TestingSFC.Oscar, MagmaGroups.MagmaCall
 
+TestingSFC._default_group_type(::Bool) = TestingSFC.MagmaGroup
+
 TestingSFC.abelian_group_type(::Type{TestingSFC.MagmaGroup}) = MagmaGroups.MagmaFinGenAbGroup
 
 TestingSFC.abelian_group_aut_type(::Type{TestingSFC.MagmaGroup}) = MagmaGroups.MagmaFinGenAbGroupAutGrp

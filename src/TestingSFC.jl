@@ -119,8 +119,12 @@ export MagmaGroup
 export OscarGroup
 # UnitGroupViaFiniteRings
 
+default_group_type() = _default_group_type(true)
+
+_default_group_type(::Any) = OscarGroup
+
 function has_SFC(O::Hecke.AlgAssAbsOrd; GRH = false)
-  return has_SFC(OscarGroup, O; GRH = GRH)
+  return has_SFC(default_group_type(), O; GRH = GRH)
 end
 
 function has_SFC(::Type{T}, O::Hecke.AlgAssAbsOrd; GRH = false) where {T}
@@ -128,7 +132,7 @@ function has_SFC(::Type{T}, O::Hecke.AlgAssAbsOrd; GRH = false) where {T}
 end
 
 function has_SFC_naive(O::Hecke.AlgAssAbsOrd; GRH = false)
-  return has_SFC_naive(OscarGroup, O; GRH = GRH)
+  return has_SFC_naive(default_group_type(), O; GRH = GRH)
 end
 
 function has_SFC_naive(::Type{T}, O::Hecke.AlgAssAbsOrd; GRH = false) where {T}
