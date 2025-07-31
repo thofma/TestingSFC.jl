@@ -60,7 +60,7 @@ check_480_962()
 
 ## Using fiber products
 
-A normal subgroup induces a fiber product for an integral group ring, see Section 6.1. Assuming that one of the rings in the corner satisfy the Eichler condition, the SFC property can be reduced to the corners using the function `reduction`:
+A normal subgroup induces a fiber product for the integral group ring, see Section 6.1 of the paper. Assuming that one of the rings in the corner satisfies the Eichler condition, the SFC property can be reduced to the other corner using the function `reduction`:
 
 ```
 julia> G = small_group(48, 32);
