@@ -317,6 +317,8 @@ check_384_580(; GRH = false) = check_384_580(TestingSFC.default_group_type(); GR
 
 function check_384_580(::Type{T}; GRH = false) where {T}
   G, HtoG = find_group_and_subgroup((384, 580), (192, 183))
+  QG = QQ[G]
+  ZG = Hecke.integral_group_ring(QG)
   F = TestingSFC.fiber_product_from_subgroup(ZG, HtoG)
   @vtime :SFC fl = TestingSFC.reduction(T, F; use_matrices = true, GRH = GRH)
 end
