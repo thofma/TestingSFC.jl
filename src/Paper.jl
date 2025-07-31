@@ -282,7 +282,7 @@ function check_480_266(::Type{T}; GRH = false, skip_class_groups) where {T}
   if !(skip_class_groups)
     CZG, CZH, CZHC2, CGamma, _, _, _, Gamma = compute_class_group_orders((480, 266), (240, 108); GRH)
     @assert order(CZG) == ZZ(2)^41 * ZZ(3)^3
-    @assert order(CZH) == ZZ(3)^9 * ZZ(3)^1
+    @assert order(CZH) == ZZ(2)^9 * ZZ(3)^1
     @assert order(CZHC2) == ZZ(2)^34 * ZZ(3)^3
     @assert order(CGamma) == ZZ(2)^16 * ZZ(3)^1
     @vtime :SFC fl = TestingSFC.has_SFC(T, Gamma; GRH = GRH)
