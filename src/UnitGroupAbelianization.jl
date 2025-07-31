@@ -41,6 +41,7 @@ function __unit_group_abelianization_nonrecursive_permutation_group(::Any, Q)
   U, QtoU = unit_group_quotient_raw(TestingSFC.MagmaGroup, Q; split = false)
   MHab, HtoMHab = maximal_abelian_quotient(U)
   Hab, MHabtoHab, HabtoMHab = isomorphism(FinGenAbGroup, MHab)
+  @vprintln :SFC "Abelianization: $(elementary_divisors(Hab))"
   fw = x -> MHabtoHab(image(HtoMHab, image(QtoU, x)))
   bw = y -> preimage(QtoU, preimage(HtoMHab, HabtoMHab(y)))
   return Hab, fw, bw
@@ -176,7 +177,8 @@ function unit_group_abelianization(::Type{T}, Q; use_matrices = :auto, split = t
     AA = abelian_group(Int[])
     fw = x -> zero(AA)
     bw = y -> one(Q)
-    return A, fw, bw
+    @vprintln :SFC "Abelianization: $(elementary_divisors(AA))"
+    return AA, fw, bw
   end
 
   AA, projs, injs = biproduct(first.(maps)...)
@@ -189,6 +191,7 @@ function unit_group_abelianization(::Type{T}, Q; use_matrices = :auto, split = t
     els = [ (maps[i][3](projs[i](y))).elem for i in 1:length(quorings)]
     return Q(crt(els, moduli))
   end
+  @vprintln :SFC "Abelianization: $(elementary_divisors(AA))"
   return AA, fw, bw
 end
 

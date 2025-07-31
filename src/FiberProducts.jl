@@ -105,17 +105,17 @@ function ftilde2(F::FiberProductOrder)
   end
 end
 
-@attr function h1(F::FiberProductOrder)
+@attr W function h1(F::FiberProductOrder{S, T, U, V, W}) where {S, T, U, V, W}
   return F.p1(intersect(F.e1 * F.M, F.R)) * F.R1
 end
 
-@attr function h2(F::FiberProductOrder)
+@attr W function h2(F::FiberProductOrder{S, T, U, V, W}) where {S, T, U, V, W}
   return F.p2(intersect(F.e2 * F.M, F.R)) * F.R2
 end
 
-@attr function h(F::FiberProductOrder)
-  return h1(F) + h2(F)
-end
+#@attr Any function h(F::FiberProductOrder)
+#  return h1(F) + h2(F)
+#end
 
 ################################################################################
 #
@@ -211,7 +211,7 @@ function _has_valid_first_component(F::FiberProductOrder, a2)
     return h, K, RtoQ
   end
   # first find any preimag of a2 under R -> M2
-  fl, c = haspreimage(h, codomain(h)(coordinates(F.M2(a2))))
+  fl, c = has_preimage_with_preimage(h, codomain(h)(coordinates(F.M2(a2))))
   if !fl
     return false, zero(codomain(F.p1))
   end

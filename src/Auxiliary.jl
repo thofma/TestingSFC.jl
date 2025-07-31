@@ -93,7 +93,7 @@ function basis_of_kernel(f, R, S)
   rR = degree(R)
   rS = degree(S)
   K, KtoRasAb = kernel(h)
-  @assert isfree(K)
+  @assert is_free(K)
   BK = [elem_in_algebra(R([KtoRasAb(g).coeff[i] for i in 1:rR])) for g in gens(K) if !iszero(g)]
   @assert length(BK) == rR - rS
   return BK

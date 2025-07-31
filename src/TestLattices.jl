@@ -10,7 +10,6 @@ function _test_lattice(O::Hecke.AlgAssAbsOrd, beta, f)
   binv = inv(b)
   primes = prime_divisors(numerator(det(Hecke.basis_matrix_wrt(f, O))))
   Y = binv * O
-  @info basis_matrix(Y) |> numerator |> det
   X = lattice_with_local_conditions(O, primes, [Y for i in 1:length(primes)])
   I = b * X
   M = parent(beta)

@@ -305,7 +305,7 @@ function _compute_a_complete_coprime_splitting(O, F; split = true)
   FinZ = Hecke._as_ideal_of_smaller_algebra(ZtoA, F)
   # this is g = F \cap Z = F \cap O_Z
   OinZ = Hecke._as_order_of_smaller_algebra(ZtoA, O, maximal_order(O))
-  OinZ2 = Order(Z, [Hecke.haspreimage(ZtoA, b)[2] for b in basis(intersect(ZtoA(1 * OZ), O))])
+  OinZ2 = order(Z, [has_preimage_with_preimage(ZtoA, b)[2] for b in basis(intersect(ZtoA(1 * OZ), O))])
   #@show OinZ == OinZ2
 
   facFinZ = factor(FinZ* OZ)

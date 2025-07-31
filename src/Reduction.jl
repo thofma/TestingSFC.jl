@@ -22,8 +22,8 @@ function from_quotient_to_center(F, OC, mC, RtoRquo, OCtoR, Rmodf2)
     _beta = y
     _betaf2 = _beta
     _beta = _beta.elem
-    @assert haspreimage(F.p2, elem_in_algebra(_beta))[1]
-    __beta = F.e2 * haspreimage(F.p2, elem_in_algebra(_beta))[2]
+    @assert has_preimage_with_preimage(F.p2, elem_in_algebra(_beta))[1]
+    __beta = F.e2 * has_preimage_with_preimage(F.p2, elem_in_algebra(_beta))[2]
     beta = (F.M)(F.e1 + __beta)
     @assert !is_zero(norm(elem_in_algebra(beta)))
     @assert is_one(F.p1(elem_in_algebra(beta)))
@@ -97,7 +97,7 @@ function reduction(::Type{T}, F; use_matrices = true, GRH::Bool = true, special 
   @vtime :SFC 2 for i in 1:n
     o = K[i]
     _beta = lift_unit_from_to(o, Rmodh2, Rmodf2).elem
-    __beta = F.e2 * haspreimage(F.p2, elem_in_algebra(_beta))[2]
+    __beta = F.e2 * has_preimage_with_preimage(F.p2, elem_in_algebra(_beta))[2]
     beta = (F.M)(F.e1 + __beta)
     @vprint :SFC 3 "Checking stable freeness of test lattice:"
     fl = _defines_stably_free_test_lattice(beta, R, F.f; GRH = GRH)

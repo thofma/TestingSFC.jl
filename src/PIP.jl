@@ -147,7 +147,7 @@ function _s1_method(R, beta, F = fiber_product_from_eichler_splitting(R); s1_met
     fl, b1 = _has_valid_first_component(F, a2)
     if fl
       el = to_final_quo(QUtoQ\(OCtoQ(OC(Hecke.normred_over_center(b1 * beta1, ZtoA1)))))
-      fll, _ = haspreimage(subtofinal_quo, el)
+      fll, _ = has_preimage_with_preimage(subtofinal_quo, el)
       if fll
         return fll
       end
@@ -165,7 +165,7 @@ function _s1_method(R, beta, F = fiber_product_from_eichler_splitting(R); s1_met
     fl, b1 = _has_valid_first_component(F, a2)
     if fl
       el = to_final_quo(QUtoQ\(OCtoQ(OC(Hecke.normred_over_center(b1 * beta1, ZtoA1)))))
-      fll, _ = haspreimage(subtofinal_quo, el)
+      fll, _ = has_preimage_with_preimage(subtofinal_quo, el)
       if fll
         return fll
       end
