@@ -19,7 +19,6 @@ FiniteRingsExtension = "FiniteRings"
 
 [compat]
 FiniteRings = "0.1.0"
-Oscar = "1.5.0"
 Reexport = "1.2.2"
 
 [extras]
