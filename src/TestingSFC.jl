@@ -104,16 +104,8 @@ include("Paper.jl")
 
 export has_SFC
 export has_SFC_naive
-
-abstract type UnitsViaMagma end
-
-abstract type UnitsViaOscar end
-
-abstract type UnitsViaFiniteRing end
-
-export UnitsViaMagma
-export UnitsViaOscar
-export UnitsViaFiniteRing
+export fiber_product_from_subgroup
+export reduction
 
 export MagmaGroup
 export OscarGroup

@@ -11,6 +11,30 @@ export check_480_962
 
 # Helper
 
+# Functions to compute units
+
+function _cyclic_units(ZG)
+  QG = algebra(ZG)
+  G = group(QG)
+  orders = [order(g) for g in G]
+  G = [ZG(QG(g)) for g in G]
+  units = copy(G)
+  for i in 1:length(G)
+    d = orders[i]
+    g = G[i]
+    @assert is_one(g^d)
+    for h in G
+      u = 1 + (g - 1) * h * sum([g^i for i in 0:d-1])
+      @assert is_one(abs(norm(elem_in_algebra(u))))
+      push!(units, u)
+      u = 1 + sum([g^i for i in 0:d-1]) * h * (g - 1)
+      @assert is_one(abs(norm(elem_in_algebra(u))))
+      push!(units, u)
+    end
+  end
+  return unique!(units)
+end
+
 # Functions to find fiber products
 function has_good_quotient(G)
   Ns = normal_subgroups(G)
@@ -115,9 +139,11 @@ end
 #GRH = false
 
 function check_48_32(; GRH = false)
-  G = small_group(24, 3)
+  G = small_group(24, 3) # \tilde{T}
+  Tt = G
   QG = QQ[G]
   ZG = integral_group_ring(QG)
+  ZTt = ZG
   C = locally_free_class_group(ZG; GRH = GRH)
   @vprintln :SFC 1 "Locally free class group of tildeT: $(elementary_divisors(C))"
   @assert order(C) == 2
@@ -127,6 +153,14 @@ function check_48_32(; GRH = false)
   C = locally_free_class_group(ZG; GRH = GRH)
   @vprintln :SFC 1 "Locally free class group of tildeT x C2: $(elementary_divisors(C))"
   @assert order(C) == 2^6
+  @vprintln :SFC 1 "Checking size of V"
+  u = _cyclic_units(ZTt)
+  Q, ZTttoQ = quo(ZTt, 2*ZTt)
+  _, mU = unit_group_quotient_matrices(default_group_type(), Q)
+  Ugens = [image(mU, ZTttoQ(u)) for u in u]
+  U, = sub(parent(Ugens[1]), Ugens) 
+  @assert order(U) == 3*2^17
+  @vprintln :SFC 1 "Found U <= V with |U| = 3*2^17"
 end
 
 # Theorem 9.4
@@ -276,7 +310,6 @@ function check_240_94(::Type{T};GRH = false, skip_class_groups = false) where {T
     @assert order(CZH) == ZZ(2)
     @assert order(CZHC2) == ZZ(2)^6
     @assert order(CGamma) == ZZ(2)^5
-    @assert TestingSFC.has_SFC(T, Gamma; GRH = GRH)
     @vtime :SFC fl = TestingSFC.has_SFC(T, Gamma; GRH = GRH)
     @assert fl
     return true

@@ -33,7 +33,7 @@ function from_quotient_to_center(F, OC, mC, RtoRquo, OCtoR, Rmodf2)
   end
 end
 
-function partial_kernel_generators(::Type{T}, F; use_matrices = true, GRH::Bool = true, special = false) where {T}
+function partial_kernel_generators(::Type{T}, F; use_matrices = :auto, GRH::Bool = true, special = false) where {T}
   h2 = TestingSFC.h2(F)
   f2 = F.f2
   R2 = F.R2
@@ -64,11 +64,11 @@ function partial_kernel_generators(::Type{T}, F; use_matrices = true, GRH::Bool 
   Rmodh2, Rmodf2, [ Rmodh2abtoRmodh2(KtoRmodh2ab(StoK(s))) for s in gens(S)]
 end
 
-function reduction(F; use_matrices = true, GRH::Bool = true)
+function reduction(F; use_matrices = :auto, GRH::Bool = true)
   return reduction(OscarGroup, F; use_matrices, GRH = GRH)
 end
 
-function reduction(::Type{T}, F; use_matrices = true, GRH::Bool = true, special = false) where {T}
+function reduction(::Type{T}, F; use_matrices = :auto, GRH::Bool = true, special = false) where {T}
   if !is_eichler(algebra(F.R1))
     if !is_eichler(algebra(F.R2))
       error("one of the two projections must be Eichler")

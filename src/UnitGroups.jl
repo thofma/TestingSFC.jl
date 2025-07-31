@@ -237,9 +237,9 @@ function unit_group_quotient_matrices(::Type{T}, Q, gens = nothing) where {T}
   #G = GL(nrows(B), F)
   #S, = sub(G, G.(mat))
   #S, mS, magmaF = magma_matrix_group(mat)
-  @info "Construction matrix group"
+  @vprintln :SFC 1 "Construction matrix group"
   S = matrix_group(T, mat)
-  @info "Setting up maps ..."
+  @vprintln :SFC 1 "Setting up maps ..."
   #phi = GAP.Globals.EpimorphismFromFreeGroup(S.X)
   ugensinv = inv.(ugens)
   basis_as_matrices = dense_matrix_type(F)[]

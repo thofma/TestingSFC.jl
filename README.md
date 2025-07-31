@@ -12,7 +12,7 @@ by W. Bley, T. Hofmann and H. Johnston.
 julia> using Pkg; Pkg.add(url = "https://github.com/thofma/TestingSFC.jl", rev = "master")
 ```
 
-If [Magma](http://magma.maths.usyd.edu.au/) is availabe and it should be used for some runtime critical subroutines, run
+If [Magma](http://magma.maths.usyd.edu.au/) is available and it should be used for some runtime critical subroutines, run
 
 ```julia-repl
 julia> using Pkg; Pkg.add(url = "https://github.com/thofma/TestingSFC.jl", rev = "magma")
@@ -34,9 +34,9 @@ julia> ZG = integral_group_ring(QG);
 julia> has_SFC(ZG)
 ```
 
-## Examples from the manuscript
+## Proofs for the paper
 
-The following functions will run the algorithms for the examples from the paper. Note that the non-Magma version might take a very long time to finish for the groups of order >= 192.
+The following functions will run the algorithms which are part of the proofs from the paper. Note that the non-Magma version might take a very long time to finish for the groups of order >= 192.
 
 ```julia
 # Theorem 9.4
@@ -49,9 +49,32 @@ check_48_32()
 check_288_409()  
 check_480_266()
 check_192_1022()
-check_96_66()    #
+check_96_66()
 check_240_94()
 check_192_183()
 check_384_580()
 check_480_962()
 ```
+
+## Using fiber products
+
+A normal subgroup induces a fiber product for an integral group ring, see Section 6.1. Assuming that one of the rings in the corner satisfy the Eichler condition, the SFC property can be reduced to the corners using the function `reduction`:
+
+```
+julia> G = small_group(48, 32);
+
+julia> H = [ U for U in subgroups(G) if order(U) == 24][1];
+
+julia> mH = hom(H, G, G.(gens(H))); # canonical map H -> G
+
+julia> ZG = integral_group_ring(QQ[G]);
+
+julia> F = fiber_product_from_subgroup(ZG, mH);
+
+julia> set_verbosity_level(:SFC, 1);
+
+julia> reduction(F)
+[...]
+true
+```
+
