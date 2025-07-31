@@ -11,7 +11,9 @@ by W. Bley, T. Hofmann and H. Johnston.
 ```julia-repl
 julia> using Pkg; Pkg.add(url = "https://github.com/thofma/TestingSFC.jl", rev = "master")
 ```
-    If Magma is availabe, run
+
+If [Magma](http://magma.maths.usyd.edu.au/) is availabe and it should be used for some runtime critical subroutines, run
+
 ```julia-repl
 julia> using Pkg; Pkg.add(url = "https://github.com/thofma/TestingSFC.jl", rev = "magma")
 ```
