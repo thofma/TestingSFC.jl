@@ -170,6 +170,15 @@ function unit_group_abelianization(::Type{T}, Q; use_matrices = :auto, split = t
     push!(maps, (A, f, g))
   end
 
+  if isempty(maps)
+    # Q is the trivial ring
+    # need to do this by hand unfortunately
+    AA = abelian_group(Int[])
+    fw = x -> zero(AA)
+    bw = y -> one(Q)
+    return A, fw, bw
+  end
+
   AA, projs, injs = biproduct(first.(maps)...)
 
   function fw(x)
