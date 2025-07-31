@@ -18,6 +18,8 @@ If [Magma](http://magma.maths.usyd.edu.au/) is available and it should be used f
 julia> using Pkg; Pkg.add(url = "https://github.com/thofma/TestingSFC.jl", rev = "magma")
 ```
 
+Note that this will also install [Oscar](https://github.com/oscar-system/Oscar.jl/) (which might take a minute).
+
 ## Usage
 
 The main functionality of the package is provided by the functions `has_SFC` and `has_SFC_naive`, which implement Algorithm 8.9 and Algorithm 10.3 (applied to the "Eichler splitting" of the algebra) respectively.
