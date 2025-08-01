@@ -14,8 +14,6 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 FiniteRings = "670499a7-7247-4883-a045-5d7ed0248a06"
 
 [sources]
-MagmaCall = {rev = "12aa51a91296a847d66b1f6ca7f95da4ec900e29", url = "https://github.com/thofma/MagmaCall.jl"}
-MagmaGroups = {rev = "e13d8f9daad9729ee52f885433d29b8b242d52fc", url = "https://github.com/thofma/MagmaGroups.jl"}
 Oscar = {rev = "247cb184dd50a8da4e4e456d1a1626a1dc9df8a1", url = "https://github.com/oscar-system/Oscar.jl.git"}
 
 [extensions]
@@ -25,7 +23,7 @@ MagmaExtension = "MagmaGroups"
 [compat]
 FiniteRings = "0.1.0"
 MagmaCall = "0.1.0"
-MagmaGroups = "1.0.0"
+MagmaGroups = "0.0.1"
 Reexport = "1.2.2"
 
 [extras]
