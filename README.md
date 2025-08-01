@@ -17,7 +17,7 @@ Note that this will also install [Oscar](https://github.com/oscar-system/Oscar.j
 
 
 > [!WARNING]  
-> All results are subject to the condition that the maximal order has stably free cancellation. This is not checked by the algorithm.
+> All results are subject to the condition that a (and therefore any) maximal order has stably free cancellation. This is not checked by the algorithm.
 
 The main functionality of the package is provided by the functions `has_SFC` and `has_SFC_naive`, which implement Algorithm 8.9 and Algorithm 10.3 (applied to the "Eichler splitting" of the algebra) respectively. Here is how one can use these functions to check that the integral group ring of the quaternion group of order $16$ has stably free cancellation. (In this case any maximal order has stably free cancellation by Corollary 4.6.)
 
@@ -33,10 +33,10 @@ julia> ZG = integral_group_ring(QG);
 julia> has_SFC(ZG)
 ```
 
-If Magma is available on your system, you can execute `using MagmaGroups` before any computation to delegate expensive subroutines to Magma. In this case, the first line would be
+If Magma is available on your system, you can execute `using MagmaGroups` before any computation to delegate expensive subroutines to Magma. In this case, the first line should be replaced by
 
 ```julia
-julia using TestingSFC, MagmaGroups
+julia> using TestingSFC, MagmaGroups
 ```
  
 ## Proofs for the paper
