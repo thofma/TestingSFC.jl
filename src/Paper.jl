@@ -244,7 +244,8 @@ function check_96_66(::Type{T}; GRH = false, skip_class_groups = false) where {T
     return true
   else
     _, _, Gamma, _ = compute_relevant_orders((96, 66), (48, 29))
-    @assert TestingSFC.has_SFC(T, Gamma; GRH = GRH)
+    @vtime :SFC fl = TestingSFC.has_SFC(T, Gamma; GRH = GRH)
+    @assert fl
     return true
   end
 end
@@ -292,7 +293,6 @@ function check_480_266(::Type{T}; GRH = false, skip_class_groups) where {T}
     return true
   else
     _, _, Gamma, _ = compute_relevant_orders((480, 266), (240, 108))
-    @assert TestingSFC.has_SFC(T, Gamma; GRH = GRH)
     @vtime :SFC fl = TestingSFC.has_SFC(T, Gamma; GRH = GRH)
     @assert fl
     return true
@@ -360,6 +360,8 @@ function check_384_580(::Type{T}; GRH = false) where {T}
   ZG = Hecke.integral_group_ring(QG)
   F = TestingSFC.fiber_product_from_subgroup(ZG, HtoG)
   @vtime :SFC fl = TestingSFC.reduction(T, F; use_matrices = true, GRH = GRH)
+  @assert fl
+  return true
 end
 
 check_480_962(; GRH = false) = check_480_962(TestingSFC.default_group_type(); GRH = GRH)
