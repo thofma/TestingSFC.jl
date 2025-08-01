@@ -227,6 +227,8 @@ function compute_class_group_orders(grpid, quotid; GRH)
   return CZG, CZH, CZHC2, CGamma, ZG, ZH, ZHC2, Gamma
 end
 
+check_96_66(;GRH = false, skip_class_groups = false) = check_96_66(TestingSFC.default_group_type(); GRH = GRH, skip_class_groups)
+
 function check_96_66(::Type{T}; GRH = false, skip_class_groups = false) where {T}
   @vprintln :SFC 1 "96, 66"
   # 96, 66

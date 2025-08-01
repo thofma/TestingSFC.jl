@@ -42,6 +42,7 @@ function partial_kernel_generators(::Type{T}, F; use_matrices = :auto, GRH::Bool
   Rmodf2, = quo(F.R2, f2 * F.R2)
   @vprintln :SFC "Computing abelianization of (R2/h2)^*"
   @vtime :SFC 2 Rmodh2ab, Rmodh2toRmodh2ab, Rmodh2abtoRmodh2 = unit_group_abelianization(T, Rmodh2; use_matrices = use_matrices, special = special)
+  @vprintln :SFC "Abelianization is: $(elementary_divisors(Rmodh2ab))"
   @vprintln :SFC "Computing ray class group (OC^+/g)^*/nr"
   # compute ray class group
   OC, mC, OCtoR, RtoRquo = compute_ray_class_group(F.R, F.f; GRH = GRH)
