@@ -4,7 +4,6 @@ using Reexport
 
 @reexport using Oscar
 @reexport using Hecke
-using MagmaGroups
 
 function __init__()
   Hecke.add_verbosity_scope(:SFC)
