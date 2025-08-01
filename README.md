@@ -7,17 +7,10 @@ by W. Bley, T. Hofmann and H. Johnston.
 
 1. The software requires version >= 1.10 of julia (see [https://julialang.org/install/](https://julialang.org/install/)).
 3. Start julia.
-2. If Magma is not available, run
+2. Run
 ```julia-repl
-julia> using Pkg; Pkg.add(url = "https://github.com/thofma/TestingSFC.jl", rev = "master")
+julia> using Pkg; pkg"registry add https://github.com/thofma/Registry"; pkg"add TestingSFC, MagmaGroups";
 ```
-
-If [Magma](http://magma.maths.usyd.edu.au/) is available and it should be used for some runtime critical subroutines, run
-
-```julia-repl
-julia> using Pkg; Pkg.add(url = "https://github.com/thofma/TestingSFC.jl", rev = "magma")
-```
-
 Note that this will also install [Oscar](https://github.com/oscar-system/Oscar.jl/) (which might take a minute).
 
 ## Usage
@@ -34,6 +27,12 @@ julia> QG = group_algebra(QQ, dicyclic_group(16));
 julia> ZG = integral_group_ring(QG);
 
 julia> has_SFC(ZG)
+```
+
+If Magma is available on your system, you can execute `using MagmaGroups` before any computation to delegate expensive subroutines to Magma. In this case, the first line would be
+
+```julia
+julia using TestingSFC, MagmaGroups
 ```
 
 ## Proofs for the paper
@@ -62,7 +61,7 @@ check_480_962()
 
 A normal subgroup induces a fiber product for the integral group ring, see Section 6.1 of the paper. Assuming that one of the rings in the corner satisfies the Eichler condition, the SFC property can be reduced to the other corner using the function `reduction`:
 
-```
+```julia
 julia> G = small_group(48, 32);
 
 julia> H = [ U for U in subgroups(G) if order(U) == 24][1];
