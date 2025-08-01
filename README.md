@@ -1,7 +1,7 @@
 # The stably free cancellation property of orders
 
 This repository contains code accompanying the paper "Determination of the stably free cancellation property for orders" ([arXiv:2407.02294](https://arxiv.org/abs/2407.02294))
-by W. Bley, T. Hofmann and H. Johnston.
+by W. Bley, T. Hofmann and H. Johnston. The code works on linux and macOS systems.
 
 ## Installation
 
