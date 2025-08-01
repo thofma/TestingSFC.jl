@@ -333,6 +333,10 @@ function check_192_1022(::Type{T}; GRH = false) where {T}
   F = TestingSFC.fiber_product_from_subgroup(ZG, HtoG)
   @vtime :SFC fl = TestingSFC.reduction(T, F; use_matrices = true, GRH = GRH)
   @assert fl
+  _, _, Gamma = compute_relevant_orders((192, 1022), (96, 204))
+  @vprintln :SFC "Now prove SFC for Gamma"
+  @vtime :SFC fl = TestingSFC.has_SFC(T, Gamma; GRH = GRH)
+  @assert fl
   return true
 end
 
