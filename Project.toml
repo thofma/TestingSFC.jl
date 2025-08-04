@@ -1,6 +1,6 @@
 name = "TestingSFC"
 uuid = "928126d8-517c-4547-9366-53ef25125cdd"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Tommy Hofmann <thofma@gmail.com>"]
 
 [deps]
@@ -10,16 +10,15 @@ MagmaGroups = "7acfbe5b-c34a-4b87-9116-540863c2b2a3"
 Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
-[sources]
-Oscar = {rev = "247cb184dd50a8da4e4e456d1a1626a1dc9df8a1", url = "https://github.com/oscar-system/Oscar.jl.git"}
-
 [extensions]
 MagmaExtension = "MagmaGroups"
 
 [compat]
 MagmaCall = "0.1.0"
 MagmaGroups = "0.0.1"
+Oscar = "1.4.1, 1.5"
 Reexport = "1.2.2"
+Hecke = "0.37.4, 0.38"
 
 [extras]
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
