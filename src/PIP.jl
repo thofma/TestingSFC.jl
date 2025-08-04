@@ -17,7 +17,6 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
   Q2A, Q2AtoQ2, Q2toQ2A = abelian_group(Q2)
   ff = hom(QA, Q2A, [Q2toQ2A(R2toQ2(F.R2(F.p2(elem_in_algebra(preimage(RtoQ, QAtoQ(a))))))) for a in gens(QA)])
   KK, KKtoQA = kernel(ff)
-
   Kelements = preimage.(RtoQ, QAtoQ.(KKtoQA.(gens(KK))))
 
   cnt = 0
@@ -34,20 +33,51 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
   cur_gens = elem_type(QU)[]
   non_unit = 0
 
+  splitf = _compute_a_coprime_splitting(R, f)
+  splitf2 = [F.p2(h) for h in splitf]
+  _Kelems = []
+  for (_f, _h) in zip(splitf, splitf2)
+    _Q, _RtoQ = quo(R, _f)
+    @assert _h * F.R2 == _h
+    _Q2, _R2toQ2 = quo(F.R2, _h * F.R2)
+    # create Q -> Q2
+    _QA, _QAtoQ, _QtoQA = abelian_group(_Q)
+    _Q2A, _Q2AtoQ2, _Q2toQ2A = abelian_group(_Q2)
+    _ff = hom(_QA, _Q2A, [_Q2toQ2A(_R2toQ2(F.R2(F.p2(elem_in_algebra(preimage(_RtoQ, _QAtoQ(a))))))) for a in gens(_QA)])
+    _KK, _KKtoQA = kernel(ff)
+    _Kelements = preimage.(RtoQ, QAtoQ.(KKtoQA.(gens(KK))))
+    push!(_Kelems, (_Kelements, _RtoQ))
+  end
+
   local to_final_quo
 
+  local_elts = Vector{Any}(undef, length(splitf))
   while true
     if order_stable >= stabilize
       #@info "Order stable for $(stabilize) new elements"
       break
     end
-    el = one(R) + R(dot(rand(-100:100, length(Kelements)), Kelements))
+    for i in 1:length(splitf)
+      _cnt = 0
+      while true
+        @info i, _cnt
+        _cnt += 1
+        _el = one(R) + R(dot(rand(-10:10, length(_Kelems[i][1])), _Kelems[i][1]))
+        if is_unit(_RtoQ(_el))
+          break
+        end
+      end
+      local_elts[i] = _el
+    end
+    el = crt(local_elts, splitf)
+    #el = one(R) + R(dot(rand(-100:100, length(Kelements)), Kelements))
     cnt += 1
     #@info cnt, non_unit
     #if cnt % 100 == 0
     #  @info non_unit, cnt, order_stable
     #  #error("Asdsdds")
     #end
+    @assert is_unit(RtoQ(el))
     if !is_unit(RtoQ(el))
       non_unit += 1
       continue

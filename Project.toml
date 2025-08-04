@@ -1,6 +1,6 @@
 name = "TestingSFC"
 uuid = "928126d8-517c-4547-9366-53ef25125cdd"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Tommy Hofmann <thofma@gmail.com>"]
 
 [deps]
@@ -18,7 +18,7 @@ MagmaCall = "0.1.0"
 MagmaGroups = "0.0.1"
 Oscar = "1.4.1, 1.5"
 Reexport = "1.2.2"
-Hecke = "0.37.4, 0.38"
+Hecke = "0.36.3, 0.37"
 
 [extras]
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
