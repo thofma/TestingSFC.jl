@@ -222,7 +222,7 @@ end
 push!(non_sfc_grp_ids, ((96, 188), "-"), ((100, 7), "-"))
 
 function check_96_188(; GRH = false)
-  _id, _name = ((96, 188), "Ot x C2"),
+  _id, _name = ((96, 188), "Ot x C2")
   @vprintln :SFC 1 "Checking not SFC for $_id ($_name)with GRH = $GRH by projecting onto quotient order"
   _, _, Gamma, _ = compute_relevant_orders(_id, (48, 48)) # 48, 48 = S4 x C2
   t = @elapsed fl, = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; s1_method = :rigorous)
