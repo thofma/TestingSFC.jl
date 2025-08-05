@@ -9,7 +9,7 @@ by W. Bley, T. Hofmann and H. Johnston. The code works on linux and macOS system
 3. Start julia.
 2. Run
 ```julia-repl
-julia> using Pkg; pkg"up";pkg"registry add https://github.com/thofma/Registry"; pkg"add TestingSFC, MagmaGroups";
+julia> using Pkg; pkg"up"; pkg"registry add https://github.com/thofma/Registry"; pkg"add TestingSFC, MagmaGroups";
 ```
 Note that this will also install [Oscar](https://github.com/oscar-system/Oscar.jl/) (which might take a minute).
 
