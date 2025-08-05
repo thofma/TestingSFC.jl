@@ -47,15 +47,15 @@ function TestingSFC.magma_matrix_group(v::Vector)
   p = Int.(characteristic(base_ring(v[1])))
   F = magf.GF(p)
   G = magf.GL(nrows(v[1]), F)
-  #@info "Translating matrices to Magma"
+  @vprintln :SFC 1 "Translating matrices to Magma"
   #vv = [TestingSFC.oscar_matrix_to_magma_matrix(F, m) for m in v]
   vv = magseq()
   for m in v
     magp1.Append(vv, TestingSFC.oscar_matrix_to_magma_matrix(F, m))
   end
-  #@info "Creating group"
+  @vprint :SFC 1 "Creating group ..."
   mS = mag"S, mS := sub<$G | $vv>; return mS";
-  #@info "done"
+  @vprintln :SFC 1 "done"
   S = mag"Domain($mS)"
   return S, mS, F
 end

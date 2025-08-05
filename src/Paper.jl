@@ -1,5 +1,6 @@
-export check_not_sfc
 export check_48_32
+export check_96_188
+export check_100_7
 export check_288_409
 export check_480_266
 export check_192_1022
