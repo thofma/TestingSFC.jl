@@ -76,7 +76,7 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
       break
     end
     for i in 1:length(splitf)
-      _cnt = 0
+      _cnt = 1
       while true
         if _cnt % 100 == 0
           @vprintln :SFC 3 "Hard to find proper unit at position $(i) ($(_cnt) tries)"

@@ -1,4 +1,4 @@
-function has_not_stably_free_cancellation_probably_no_split(O::Hecke.AlgAssAbsOrd; repetitions::Int = 50, GRH = true)
+function has_not_stably_free_cancellation_probably_no_split(O::Hecke.AlgAssAbsOrd; repetitions::Int = 50, GRH = false)
   M = maximal_order(O)
   f = Hecke._get_a_twosided_conductor(O, M)
   fl, f = is_locally_radical_with_adjustment(M, f)
@@ -65,7 +65,7 @@ function has_not_stably_free_cancellation_probably_no_split(O::Hecke.AlgAssAbsOr
     #println("i: $i\nfree: $free")
   end
   @vprintln :SFC 1 "Tried the following number elements: $k"
-  @vprintln :SFC 1 "Number of Generalized Swan modules (units): $units"
+  @vprintln :SFC 1 "Number of test lattices: $units"
   @vprintln :SFC 1 "Stably free: $stably_free"
   @vprintln :SFC 1 "Free: $free"
   @vprintln :SFC 1 "Unique elements: $(length(S))"
@@ -74,7 +74,7 @@ function has_not_stably_free_cancellation_probably_no_split(O::Hecke.AlgAssAbsOr
 end
 
 function has_not_stably_free_cancellation_probably(O::Hecke.AlgAssAbsOrd; repetitions::Int = 50, s1_method = :rigorous, GRH::Bool = true)
-  @vprintln :SFC 1 "Testing $repetitions random stably free Swan modules"
+  @vprintln :SFC 1 "Testing $repetitions random stably free test lattice"
   @vprintln :SFC 1 "GRH $(GRH)"
   #Gamma2 = Hecke._ring_of_multipliers_integral_ideal(pradical(O, 2), fmpz(2))
   #@show valuation(discriminant(Gamma2), 2)
@@ -95,7 +95,6 @@ function has_not_stably_free_cancellation_probably(O::Hecke.AlgAssAbsOrd; repeti
     return false
   end
 
-  @vprintln :SFC 1 "Computing fibre product (from Eichler splitting)"
   # If there is no splitting, do something else
   de = decompose(algebra(O))
   eich = [is_eichler(Hecke._as_algebra_over_center(d[1])[1]) for d in de]
@@ -108,6 +107,7 @@ function has_not_stably_free_cancellation_probably(O::Hecke.AlgAssAbsOrd; repeti
     return false
   end
 
+  @vprintln :SFC 1 "Computing fibre product (from Eichler splitting)"
   if all(eich) || all((!).(eich))
     @vprintln :SFC 1 "No splitting ..."
     return has_not_stably_free_cancellation_probably_no_split(O; repetitions, GRH = GRH)
@@ -199,7 +199,7 @@ function has_not_stably_free_cancellation_probably(O::Hecke.AlgAssAbsOrd; repeti
     #println("i: $i\nfree: $free")
   end
   @vprintln :SFC 3 "Tried the following number elements: $k"
-  @vprintln :SFC 3 "Number of Generalized Swan modules (units): $units"
+  @vprintln :SFC 3 "Number of Generalized test lattice: $units"
   @vprintln :SFC 3 "Stably free: $stably_free"
   @vprintln :SFC 3 "Free: $free"
   @vprintln :SFC 3 "Unique elements: $(length(S))"
@@ -213,12 +213,12 @@ end
 #
 ################################################################################
 
-function sfc_of_canonical_quotient(Gamma; GRH::Bool = true)
+function sfc_of_canonical_quotient(Gamma; GRH::Bool = false)
   GammaGamma = canonical_quotient_order(Gamma)
   @vprintln :SFC 1 "Degree of quotient: $(degree(GammaGamma))"
   @vprintln :SFC 1 "GRH: $GRH"
-  fl, = has_not_stably_free_cancellation_probably(GammaGamma; repetitions = 100, GRH = GRH)
-  @vprintln :SFC 1 "=== Found a stably free non-free Swan module: $fl"
+  fl, = has_not_stably_free_cancellation_probably(GammaGamma; repetitions = 100, GRH = GRH, s1_method = :rigorous)
+  @vprintln :SFC 1 "=== Found a stably free non-free test lattice: $fl"
   if fl
     @vprintln :SFC 1 "=== Canonical quotient does not have SFC"
     return false

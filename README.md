@@ -45,7 +45,17 @@ The following functions will run the algorithms which are part of the proofs fro
 
 ```julia
 # Theorem 9.4
-check_not_sfc()
+check_16_12()   # Q8 x C2
+check_24_7()    # Q12 x C2
+check_32_41()   # Q16 x C2
+check_40_7(),   # Q20 x C2
+check_96_198()  # Tt x C2^2
+check_96_188()  # Ot x C2
+check_480_960() # It x C2^2
+check_32_14()
+check_36_7()
+check_64_14()
+check_100_7()
 
 # Theorem 6.6
 check_48_32()

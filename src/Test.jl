@@ -71,7 +71,7 @@ function _try_proving_non_sfc_using_quotients(Gamma, dimension_bound::Int = 48; 
   return _try_proving_non_sfc_using_quotients(OscarGroup, Gamma, dimension_bound; use_all_noneichler, minimal)
 end
 
-function _try_proving_non_sfc_using_quotients(::Type{T}, Gamma, dimension_bound::Int = 48; use_all_noneichler::Bool = false, minimal::Bool = false) where {T}
+function _try_proving_non_sfc_using_quotients(::Type{T}, Gamma, dimension_bound::Int = 48; use_all_noneichler::Bool = false, minimal::Bool = false, dimension_range = 1:degree(Gamma)) where {T}
   cand = _find_all_possible_quotient_algebras_components(algebra(Gamma), dimension_bound; use_all_noneichler)
   # all candidates cand contain the non-eichler components,
   # so min(#cand) = is the number of non-eichler components
@@ -81,6 +81,11 @@ function _try_proving_non_sfc_using_quotients(::Type{T}, Gamma, dimension_bound:
       continue
     end
     _, p = Hecke.product_of_components_with_projection(algebra(Gamma), c)
+    if !(dim(codomain(p)) in dimension_range)
+      @info "Wrong dimension"
+      continue
+    end
+
     GammaGamma = p(Gamma)
     if is_maximal(GammaGamma)
       @info "Quotient is maximal ... skipping"
@@ -91,15 +96,18 @@ function _try_proving_non_sfc_using_quotients(::Type{T}, Gamma, dimension_bound:
       continue
     end
     @info "Degree of quotient: $(degree(GammaGamma))"
-    fl = has_not_stably_free_cancellation_probably(GammaGamma, 100; s1_method = :heuristic)
     @info "has_not_stably_free_cancellation_probably: $fl"
+    fl = has_not_stably_free_cancellation_probably(GammaGamma; repetitions = 100, s1_method = :heuristic)
     if fl
+      @info "Checking again ..."
+      ffl = has_not_stably_free_cancellation_probably(GammaGamma; repetitions = 100, s1_method = :rigorous)
+      @assert ffl
       return true, GammaGamma
     else
       if minimal
         @info "Found a quotient, which has probably SFC, but lets prove it because we look for a minimal quotient"
         if _is_purely_noneichler(GammaGamma)
-          @assert has_stably_free_cancellation_brute_force(T, GammaGamma)
+          @assert has_SFC_naive(T, GammaGamma)
         else
           @assert proof_via_standard_eichler_splitting(T, GammaGamma)
         end

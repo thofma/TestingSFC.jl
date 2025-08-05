@@ -133,15 +133,15 @@ function TestingSFC.magma_abelian_quotient_slow_of_matrix_group(v)
   p = Int.(characteristic(base_ring(v[1])))
   F = magf.GF(p)
   G = magf.GL(nrows(v[1]), F)
-  @info "Translating matrices to Magma"
+  #@info "Translating matrices to Magma"
   #vv = [TestingSFC.oscar_matrix_to_magma_matrix(F, m) for m in v]
   vv = magseq()
   for m in v
     magp1.Append(vv, TestingSFC.oscar_matrix_to_magma_matrix(F, m))
   end
-  @info "Creating group"
+  ##@info "Creating group"
   mS = mag"S, mS := sub<$G | $vv>; n := #S; return mS";
-  @info "done"
+  ##@info "done"
   S = mag"Domain($mS)"
   G = S
   g = mag"D := DerivedSubgroup($G); Q, GtoQ := quo< $G | D>; A, f := AbelianGroup(Q); g := GtoQ * f; return g"
@@ -176,7 +176,7 @@ function TestingSFC.magma_abelian_quotient_slow_of_matrix_group(v)
 end
 
 function TestingSFC.magma_quotient(G::MagmaObject, H::MagmaObject)
-  @info "Computing quotient"
+  #@info "Computing quotient"
   mS = mag"S, mS := quo<$G | $H>; return mS"
   return mag"Codomain($(mS))", mS
 end

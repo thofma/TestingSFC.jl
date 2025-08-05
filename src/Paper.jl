@@ -136,79 +136,6 @@ function find_group_and_subgroup(grpid, quotid)
   return G, StoG
 end
 
-#GRH = false
-
-function check_48_32(; GRH = false)
-  G = small_group(24, 3) # \tilde{T}
-  Tt = G
-  QG = QQ[G]
-  ZG = integral_group_ring(QG)
-  ZTt = ZG
-  C = locally_free_class_group(ZG; GRH = GRH)
-  @vprintln :SFC 1 "Locally free class group of tildeT: $(elementary_divisors(C))"
-  @assert order(C) == 2
-  G = small_group(48, 32)
-  QG = QQ[G]
-  ZG = integral_group_ring(QG)
-  C = locally_free_class_group(ZG; GRH = GRH)
-  @vprintln :SFC 1 "Locally free class group of tildeT x C2: $(elementary_divisors(C))"
-  @assert order(C) == 2^6
-  @vprintln :SFC 1 "Checking size of V"
-  u = _cyclic_units(ZTt)
-  Q, ZTttoQ = quo(ZTt, 2*ZTt)
-  _, mU = unit_group_quotient_matrices(default_group_type(), Q)
-  Ugens = [image(mU, ZTttoQ(u)) for u in u]
-  U, = sub(parent(Ugens[1]), Ugens) 
-  @assert order(U) == 3*2^17
-  @vprintln :SFC 1 "Found U <= V with |U| = 3*2^17"
-end
-
-# Theorem 9.4
-
-function check_not_sfc(; GRH = false)
-  ids = [(16, 12),
-         (32, 41),
-         (40, 7),
-         (96, 198),
-         #(96, 188),
-         #(240, 94),
-         (32, 14),
-         (36, 7),
-         (64, 14),
-        ]
-  for id in ids
-    @vprintln :SFC 1 "Checking not SFC of canonical quotient for $id (GRH = $GRH)"
-    @v_do :SFC 1 Hecke.pushindent()
-    G = small_group(id...)
-    QG = QQ[G]
-    ZG = integral_group_ring(QG)
-    @vtime :SFC fl = !TestingSFC.sfc_of_canonical_quotient(ZG; GRH = GRH)
-    @assert fl
-    @v_do :SFC 1 Hecke.popindent()
-  end
-
-  @vprintln :SFC 1 "Checking not SFC for (100, 7) (GRH = $GRH)"
-  @v_do :SFC 1 Hecke.pushindent()
-  # for 100, 7 we have to do something different
-  G = small_group(100, 7)
-  QG = QQ[G]
-  ZG = integral_group_ring(QG)
-  dec = decompose(QG)
-  ind = findall(!iseichler, first.(dec))
-  found = false
-  @vtime :SFC for v in subsets(ind, 3)
-    _, p = Hecke.product_of_components_with_projection(QG, v)
-    Gamma = p(ZG)
-    fl = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; repetitions = 100, GRH = GRH)
-    if fl
-      found = true
-      break
-    end
-  end
-  @v_do :SFC 1 Hecke.popindent()
-  @assert found
-end
-
 function compute_class_group_orders(grpid, quotid; GRH)
   @vprintln :SFC 1 "Computing the orders"
   ZG, ZH, Gamma, ZHC2 = compute_relevant_orders(grpid, quotid)
@@ -226,6 +153,113 @@ function compute_class_group_orders(grpid, quotid; GRH)
   @vprintln :SFC 1 "Locally free class group of Gamma: $(elementary_divisors(CGamma)) $(factor(hGamma)) $(round(Int, tGamma))s"
   return CZG, CZH, CZHC2, CGamma, ZG, ZH, ZHC2, Gamma
 end
+
+################################################################################
+#
+#  Theorem 6.6
+#
+################################################################################
+
+function check_48_32(; GRH = false)
+  CZG, CZH, CZHC2, CGamma, _, _, _, Gamma = compute_class_group_orders((48, 32), (24, 3); GRH)
+  G = small_group(24, 3) # \tilde{T}
+  Tt = G
+  QG = QQ[G]
+  ZG = integral_group_ring(QG)
+  ZTt = ZG
+  u = _cyclic_units(ZTt)
+  Q, ZTttoQ = quo(ZTt, 2*ZTt)
+  _, mU = unit_group_quotient_matrices(default_group_type(), Q)
+  Ugens = [image(mU, ZTttoQ(u)) for u in u]
+  U, = sub(parent(Ugens[1]), Ugens) 
+  @assert order(U) == 3*2^17
+  @vprintln :SFC 1 "Found U <= V with |U| = 3*2^17"
+end
+
+################################################################################
+#
+#  Theorem 9.4
+#
+################################################################################
+
+non_sfc_grp_ids = [
+         ((16, 12), "Q8 x C2"),
+         ((24, 7), "Q12 x C2"),
+         ((32, 41), "Q16 x C2"),
+         ((40, 7), "Q20 x C2"),
+         ((96, 198), "Tt x C2^2"),
+         #((96, 188), "Ot x C2") # separate, see below
+         ((480, 960), "It x C2^2"),
+         ((32, 14), "-"),
+         ((36, 7), "-"),
+         ((64, 14), "-"),
+         #((100, 7)) # separate, see below
+        ]
+
+for (id, _name) in non_sfc_grp_ids
+  func_name = Symbol("check_$(id[1])_$(id[2])")
+  @eval begin
+    export $func_name
+    function ($func_name)(; GRH = false)
+      @vprintln :SFC 1 "Checking not SFC for $($id) ($($_name)) with GRH = $GRH by projecting onto abelian and quaternionic parts"
+      if $id == (480, 960)
+        @warn "This will take a while ..."
+      end
+      @v_do :SFC 1 Hecke.pushindent()
+      G = small_group($id...)
+      QG = QQ[G]
+      ZG = integral_group_ring(QG)
+      t = @elapsed fl = !TestingSFC.sfc_of_canonical_quotient(ZG; GRH = GRH)
+      @assert fl
+      @vprintln :SFC "Time for $($id): $t"
+      @v_do :SFC 1 Hecke.popindent()
+      return true
+    end
+  end
+end
+
+push!(non_sfc_grp_ids, ((96, 188), "-"), ((100, 7), "-"))
+
+function check_96_188(; GRH = false)
+  id, _name = ((96, 188), "Ot x C2"),
+  @vprintln :SFC 1 "Checking not SFC for $id ($_name)with GRH = $GRH by projecting onto quotient order"
+  _, _, Gamma, _ = compute_relevant_orders(id, (48, 48)) # 48, 48 = S4 x C2
+  t = @elapsed fl, = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; s1_method = :rigorous)
+  @vprint :SFC "Time for $(id): $t"
+  @assert fl
+  return true
+end
+
+function check_100_7(; GRH = false)
+  id = (100, 7)
+  @vprintln :SFC 1 "Checking not SFC for $id with GRH = $GRH by projecting onto a quotient order"
+  @v_do :SFC 1 Hecke.pushindent()
+  # for 100, 7 we have to do something different
+  G = small_group(100, 7)
+  QG = QQ[G]
+  ZG = integral_group_ring(QG)
+  dec = decompose(QG)
+  ind = findall(!iseichler, first.(dec))
+  found = false
+  t = @elapsed for v in subsets(ind, 3)
+    _, p = Hecke.product_of_components_with_projection(QG, v)
+    Gamma = p(ZG)
+    fl = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; repetitions = 100, GRH = GRH)
+    if fl
+      found = true
+      break
+    end
+  end
+  @assert found
+  @vprint :SFC "Time for $(id): $t"
+  @v_do :SFC 1 Hecke.popindent()
+end
+
+################################################################################
+#
+#  Proof for SFC
+#
+################################################################################
 
 check_96_66(;GRH = false, skip_class_groups = false) = check_96_66(TestingSFC.default_group_type(); GRH = GRH, skip_class_groups)
 
@@ -390,27 +424,23 @@ function _all_centers()
   QG = QQ[G]
   C, = center(QG)
   push!(res, ("24, 3", first.(Hecke._as_number_fields(C))))
+
   #
   @vprintln :SFC 1 "48, 32"
   G = small_group(48, 32)
   QG = QQ[G]
   C, = center(QG)
   push!(res, ("48, 32", first.(Hecke._as_number_fields(C))))
+
   #
-  @vprintln :SFC 1 "100, 7"
-  G = small_group(100, 7)
-  QG = QQ[G]
-  C, = center(QG)
-  push!(res, ("100, 7", first.(Hecke._as_number_fields(C))))
-  #
-  @vprintln :SFC 1 "96 66"
-  ZG, ZH, Gamma, ZHC2 = compute_relevant_orders((96, 66), (48, 29))
-  QG = algebra(ZG)
-  C, = center(QG)
-  push!(res, ("96, 66", first.(Hecke._as_number_fields(C))))
-  QHC2 = algebra(ZHC2)
-  C, = center(QHC2)
-  push!(res, ("48, 29 x C2", first.(Hecke._as_number_fields(C))))
+  for (id, _) in non_sfc_grp_ids
+    @vprintln :SFC 1 "$id"
+    G = small_group(id...)
+    QG = QQ[G]
+    C, = center(QG)
+    push!(res, ("($id)", first.(Hecke._as_number_fields(C))))
+  end
+ 
   #
   @vprintln :SFC 1 "288 409"
   ZG, ZH, Gamma, ZHC2 = compute_relevant_orders((288, 409), (144, 127))
@@ -420,6 +450,7 @@ function _all_centers()
   QHC2 = algebra(ZHC2)
   C, = center(QHC2)
   push!(res, ("144, 127 x C2", first.(Hecke._as_number_fields(C))))
+
   #
   @vprintln :SFC 1 "480, 266"
   ZG, ZH, Gamma, ZHC2 = compute_relevant_orders((480, 266), (240, 108))
@@ -429,18 +460,48 @@ function _all_centers()
   QHC2 = algebra(ZHC2)
   C, = center(QHC2)
   push!(res, ("244, 108 x C2", first.(Hecke._as_number_fields(C))))
+  
   #
   @vprintln :SFC 1 "192, 1022"
   G, HtoG = find_group_and_subgroup((192, 1022), (96, 204))
   QG = QQ[G]
   C, = center(QG)
   push!(res, ("192, 1022", first.(Hecke._as_number_fields(C))))
+ 
+  #
+  @vprintln :SFC 1 "96 66"
+  ZG, ZH, Gamma, ZHC2 = compute_relevant_orders((96, 66), (48, 29))
+  QG = algebra(ZG)
+  C, = center(QG)
+  push!(res, ("96, 66", first.(Hecke._as_number_fields(C))))
+  QHC2 = algebra(ZHC2)
+  C, = center(QHC2)
+  push!(res, ("48, 29 x C2", first.(Hecke._as_number_fields(C))))
+  
+  #
+  @vprintln :SFC 1 "240, 94"
+  ZG, ZH, Gamma, ZHC2 = compute_relevant_orders((240, 94), (120, 35))
+  QG = algebra(ZG)
+  C, = center(QG)
+  push!(res, ("240, 94", first.(Hecke._as_number_fields(C))))
+  QHC2 = algebra(ZHC2)
+  C, = center(QHC2)
+  push!(res, ("120, 35 x C2", first.(Hecke._as_number_fields(C))))
+
   #
   @vprintln :SFC 1  "192, 183"
   G, HtoG = find_group_and_subgroup((192, 183), (96, 66))
   QG = QQ[G]
   C, = center(QG)
   push!(res, ("192, 183", first.(Hecke._as_number_fields(C))))
+ 
+  #
+  @vprintln :SFC 1  "384, 580"
+  G, HtoG =find_group_and_subgroup((384, 580), (192, 183))
+  QG = QQ[G]
+  C, = center(QG)
+  push!(res, ("384, 580", first.(Hecke._as_number_fields(C))))
+
   #
   @vprintln :SFC 1  "480 962"
   G, HtoG = find_group_and_subgroup((480, 962), (96, 66))

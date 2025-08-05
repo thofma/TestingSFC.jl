@@ -332,30 +332,3 @@ function _compute_a_complete_coprime_splitting(O, F; split = true)
 
   return moduli
 end
-
-# Assume I \subseteq J
-# (R/I)^* -> (R/J)^* is surjective
-# The kernel is ((1 + J) \cap (R/I))/(1 + I)
-# We enumerate the kernel by enumerating J/I and checking which element is
-# invertible in R/I
-function kernel_of_unit_group_map(R, I, J)
-  @assert is_one(denominator(basis_matrix(I) * inv(basis_matrix(J))))
-  RmodQ, RtoRmodQ = quo(R, I)
-  Quo, QuotoR = _quo_as_abelian_group(J, I)
-  @info elementary_divisors(Quo)
-  @info "Iterating over J/I: $(order(Quo))"
-  cnt = 0
-  gens = elem_type(R)[]
-  for g in Quo
-    cnt += 1
-    if cnt % 10000 == 0
-      @info "So far: $cnt"
-    end
-    el = R(1 + QuotoR(g))
-    if is_unit(RtoRmodQ(el))
-      push!(gens, el)
-    end
-  end
-  @info "Found $(length(gens)) generators"
-  return gens
-end
