@@ -43,7 +43,7 @@ end
 function _defines_free_test_lattice(beta::Hecke.AlgAssAbsOrdElem, O; side = :right, GRH::Bool = true, fiber_product = nothing, proof = :rigorous)
   # f = two-sided ideal
   if fiber_product == nothing
-    # fibre product needs to have the same maximal order
+    # fiber product needs to have the same maximal order
     _F = fiber_product_from_eichler_splitting(O, parent(beta))
   else
     _F = fiber_product

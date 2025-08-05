@@ -143,7 +143,7 @@ function _s1_gens_rigorous(R, F = fiber_product_from_eichler_splitting(R))
 end
 
 function _s1_method(R, beta, F = fiber_product_from_eichler_splitting(R); s1_method = :rigorous, GRH::Bool = true)
-  # maximal order of fibre product must be the parent of beta
+  # maximal order of fiber product must be the parent of beta
   @assert beta in F.M
   @vprintln :SFC 2 "Calling improved PIP method with parameters ($(s1_method), GRH = $(GRH))"
   if s1_method == :rigorous

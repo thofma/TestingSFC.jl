@@ -107,7 +107,7 @@ function has_not_stably_free_cancellation_probably(O::Hecke.AlgAssAbsOrd; repeti
     return false
   end
 
-  @vprintln :SFC 1 "Computing fibre product (from Eichler splitting)"
+  @vprintln :SFC 1 "Computing fiber product (from Eichler splitting)"
   if all(eich) || all((!).(eich))
     @vprintln :SFC 1 "No splitting ..."
     return has_not_stably_free_cancellation_probably_no_split(O; repetitions, GRH = GRH)

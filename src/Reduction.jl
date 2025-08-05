@@ -87,7 +87,7 @@ function reduction(::Type{T}, F; use_matrices = :auto, GRH::Bool = true, special
   @vtime :SFC 2 Rmodh2, Rmodf2, K = partial_kernel_generators(T, F; use_matrices, GRH = GRH, special)
   @v_do :SFC popindent()
   @vprintln :SFC "ker(∂) number of generators: $(length(K))"
-  # Computing Eichler splitting fibre product for the freeness test
+  # Computing Eichler splitting fiber product for the freeness test
   @vprintln :SFC "Computing Eichler splitting for improved PIP test"
   @v_do :SFC pushindent()
   @vtime :SFC 2 _F = fiber_product_from_eichler_splitting(R, F.M)
