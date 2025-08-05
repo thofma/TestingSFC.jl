@@ -222,18 +222,18 @@ end
 push!(non_sfc_grp_ids, ((96, 188), "-"), ((100, 7), "-"))
 
 function check_96_188(; GRH = false)
-  id, _name = ((96, 188), "Ot x C2"),
-  @vprintln :SFC 1 "Checking not SFC for $id ($_name)with GRH = $GRH by projecting onto quotient order"
-  _, _, Gamma, _ = compute_relevant_orders(id, (48, 48)) # 48, 48 = S4 x C2
+  _id, _name = ((96, 188), "Ot x C2"),
+  @vprintln :SFC 1 "Checking not SFC for $_id ($_name)with GRH = $GRH by projecting onto quotient order"
+  _, _, Gamma, _ = compute_relevant_orders(_id, (48, 48)) # 48, 48 = S4 x C2
   t = @elapsed fl, = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; s1_method = :rigorous)
-  @vprint :SFC "Time for $(id): $t"
+  @vprint :SFC "Time for $(_id): $t"
   @assert fl
   return true
 end
 
 function check_100_7(; GRH = false)
-  id = (100, 7)
-  @vprintln :SFC 1 "Checking not SFC for $id with GRH = $GRH by projecting onto a quotient order"
+  _id = (100, 7)
+  @vprintln :SFC 1 "Checking not SFC for $_id with GRH = $GRH by projecting onto a quotient order"
   @v_do :SFC 1 Hecke.pushindent()
   # for 100, 7 we have to do something different
   G = small_group(100, 7)
@@ -252,7 +252,7 @@ function check_100_7(; GRH = false)
     end
   end
   @assert found
-  @vprint :SFC "Time for $(id): $t"
+  @vprint :SFC "Time for $(_id): $t"
   @v_do :SFC 1 Hecke.popindent()
 end
 
@@ -434,12 +434,12 @@ function _all_centers()
   push!(res, ("48, 32", first.(Hecke._as_number_fields(C))))
 
   #
-  for (id, _) in non_sfc_grp_ids
-    @vprintln :SFC 1 "$id"
-    G = small_group(id...)
+  for (_id, _) in non_sfc_grp_ids
+    @vprintln :SFC 1 "$_id"
+    G = small_group(_id...)
     QG = QQ[G]
     C, = center(QG)
-    push!(res, ("($id)", first.(Hecke._as_number_fields(C))))
+    push!(res, ("($_id)", first.(Hecke._as_number_fields(C))))
   end
  
   #

@@ -29,11 +29,11 @@ function is_locally_radical_with_adjustment(ML, f)
     end
   end
   if newg != finZ
-    @vprintln :SFC "Conductor is not locally radical (Hyptohesis (F) not satisfied), adjusting ..."
+    @vprintln :SFC "Conductor is not locally radical, adjusting ..."
     f = Hecke._as_ideal_of_larger_algebra(ZtoA, newg, ML)
     return false, f
   else
-    @vprintln :SFC "Conductor is locally radical (Hyptohesis (F) satisfied)"
+    @vprintln :SFC "Conductor is locally radical)"
     return true, f
   end
 end
