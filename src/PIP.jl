@@ -5,7 +5,9 @@
 ################################################################################
 
 # compute generators of S1 heuristically
-function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stabilize = 2)
+function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stabilize = 5)
+  @vprintln :SFC 3 "Computing generators for S with the heuristic approach (stabilize = $stabilize)"
+  @vprintln :SFC 3 "Computing the kernel of R/f -> R_2/f_2"
   h = _setup_maps_as_abelian_groups(F.p2, R, F.M2)
   K = basis_of_kernel(F.p2, R, F.M2)
   f = F.f
@@ -21,6 +23,8 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
 
   cnt = 0
 
+  @vprintln :SFC 3 "Computing unit group of quotient of O_C"
+
   A1 = algebra(F.M1)
   Z, ZtoA1 = center(A1)
   g1 = Hecke._as_ideal_of_smaller_algebra(ZtoA1, F.f1)
@@ -33,9 +37,11 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
   cur_gens = elem_type(QU)[]
   non_unit = 0
 
-  splitf = _compute_a_coprime_splitting(R, f)
+  @vprintln :SFC 3 "Factoring f"
+  splitf = _compute_a_complete_coprime_splitting(R, f)
   splitf2 = [F.p2(h) for h in splitf]
   _Kelems = []
+  @vprintln :SFC 3 "Decomposing the map R/f -> R_2/f_2 using CRT"
   for (_f, _h) in zip(splitf, splitf2)
     _Q, _RtoQ = quo(R, _f)
     @assert _h * F.R2 == _h
@@ -51,8 +57,20 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
 
   local to_final_quo
 
-  local_elts = Vector{Any}(undef, length(splitf))
+  local_elts = Vector{elem_type(R)}(undef, length(splitf))
+  @vprintln :SFC 3 "Compute idempotents for CRT"
+  idems = Vector{elem_type(R)}(undef, length(splitf))
+  for i in 1:length(splitf)
+    _elts = [zero(R) for j in 1:length(splitf)]
+    _elts[i] = one(R)
+    idems[i] = crt(_elts, splitf)
+  end
+
   while true
+    if cnt % 100 == 0
+      @vprintln :SFC 3 "Current order of quotient: $(order(final_quo)); number of stabilizations: $(stabilize)"
+    end
+
     if order_stable >= stabilize
       #@info "Order stable for $(stabilize) new elements"
       break
@@ -60,16 +78,20 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
     for i in 1:length(splitf)
       _cnt = 0
       while true
-        @info i, _cnt
+        if _cnt % 100 == 0
+          @vprintln :SFC 3 "Hard to find proper unit at position $(i) ($(_cnt) tries)"
+        end
         _cnt += 1
-        _el = one(R) + R(dot(rand(-10:10, length(_Kelems[i][1])), _Kelems[i][1]))
-        if is_unit(_RtoQ(_el))
+        _el = one(R) + mod(R(dot(rand(-1000:1000, length(_Kelems[i][1])), _Kelems[i][1])), splitf[i])
+        if is_unit(_Kelems[i][2](_el))
+          local_elts[i] = _el
           break
         end
       end
-      local_elts[i] = _el
     end
-    el = crt(local_elts, splitf)
+    #el = crt(local_elts, splitf)
+    el = sum(idems[i] * local_elts[i] for i in 1:length(splitf))
+    #@assert el - el2 in f
     #el = one(R) + R(dot(rand(-100:100, length(Kelements)), Kelements))
     cnt += 1
     #@info cnt, non_unit
@@ -77,11 +99,11 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
     #  @info non_unit, cnt, order_stable
     #  #error("Asdsdds")
     #end
-    @assert is_unit(RtoQ(el))
-    if !is_unit(RtoQ(el))
-      non_unit += 1
-      continue
-    end
+    #@assert is_unit(RtoQ(el))
+    #if !is_unit(RtoQ(el))
+    #  non_unit += 1
+    #  continue
+    #end
     @assert is_one(R2toQ2(F.R2(F.p2(elem_in_algebra(el)))))
     newelem = QUtoQ\(OCtoQ(OC(Hecke.normred_over_center(F.p1(elem_in_algebra(el)), ZtoA1))))
     push!(cur_gens, newelem)
@@ -92,10 +114,6 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
     else
       order_stable = 0
       final_quo, to_final_quo = _final_quo, _to_final_quo
-    end
-
-    if cnt % 1000 == 0
-      #@info "number of non-units: $(non_unit)/$(cnt)"
     end
 
     if order_stable >= stabilize
