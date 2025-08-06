@@ -1,4 +1,5 @@
 function has_not_stably_free_cancellation_probably_no_split(O::Hecke.AlgAssAbsOrd; repetitions::Int = 50, GRH = false)
+  @vprintln :SFC 1 "Testing $repetitions random stably free test lattices"
   M = maximal_order(O)
   f = Hecke._get_a_twosided_conductor(O, M)
   fl, f = is_locally_radical_with_adjustment(M, f)
@@ -57,7 +58,7 @@ function has_not_stably_free_cancellation_probably_no_split(O::Hecke.AlgAssAbsOr
     if !fl #!Hecke.__isprincipal(O, I, :right, beta)[1]
       @vprintln :SFC 1 "Order does not have SFC"
       @vprintln :SFC 1 "Tried the following number elements: $k"
-      return true
+      return true, beta, f
     end
     i += 1
     free += 1
@@ -73,9 +74,9 @@ function has_not_stably_free_cancellation_probably_no_split(O::Hecke.AlgAssAbsOr
   return false
 end
 
-function has_not_stably_free_cancellation_probably(O::Hecke.AlgAssAbsOrd; repetitions::Int = 50, s1_method = :rigorous, GRH::Bool = true)
-  @vprintln :SFC 1 "Testing $repetitions random stably free test lattice"
-  @vprintln :SFC 1 "GRH $(GRH)"
+function has_not_stably_free_cancellation_probably(O::Hecke.AlgAssAbsOrd; repetitions::Int = 50, s1_method = :rigorous, GRH::Bool = false)
+  @vprintln :SFC 1 "Testing $repetitions random stably free test lattices"
+  #@vprintln :SFC 1 "GRH $(GRH)"
   #Gamma2 = Hecke._ring_of_multipliers_integral_ideal(pradical(O, 2), fmpz(2))
   #@show valuation(discriminant(Gamma2), 2)
   #I = pradical(Gamma2, 2)
@@ -213,19 +214,24 @@ end
 #
 ################################################################################
 
-function sfc_of_canonical_quotient(Gamma; GRH::Bool = false)
+function sfc_of_canonical_quotient(Gamma; GRH::Bool = false, method = :s1)
   GammaGamma = canonical_quotient_order(Gamma)
   @vprintln :SFC 1 "Degree of quotient: $(degree(GammaGamma))"
-  @vprintln :SFC 1 "GRH: $GRH"
-  fl, = has_not_stably_free_cancellation_probably(GammaGamma; repetitions = 100, GRH = GRH, s1_method = :rigorous)
-  @vprintln :SFC 1 "=== Found a stably free non-free test lattice: $fl"
+  #@vprintln :SFC 1 "GRH: $GRH"
+  if method === :s1
+    fl, = has_not_stably_free_cancellation_probably(GammaGamma; repetitions = 100, GRH = GRH, s1_method = :rigorous)
+  else
+    @assert method === :bj
+    fl, = has_not_stably_free_cancellation_probably_no_split(GammaGamma; repetitions = 100, GRH = GRH)
+  end
+  @vprintln :SFC 1 "Found a stably free non-free test lattice: $fl"
   if fl
-    @vprintln :SFC 1 "=== Canonical quotient does not have SFC"
+    @vprintln :SFC 1 "Image of projection onto abelian and quaternionic components does not have SFC"
     return false
   else
-    @vprintln :SFC 1 "=== Canonical quotient probably has SFC"
+    @vprintln :SFC 1 "Image of projection onto abelian and quaternionic components probably has SFC"
     return true
-    @vprintln :SFC 1 "=== Now proof that canonical quotient has SFC"
+    @vprintln :SFC 1 "Now proof that quotient has SFC"
     return proof_via_standard_eichler_splitting_new(Gamma; GRH = GRH)
   end
 end

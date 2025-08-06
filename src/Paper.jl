@@ -203,7 +203,7 @@ for (id, _name) in non_sfc_grp_ids
   @eval begin
     export $func_name
     function ($func_name)(; GRH = false)
-      @vprintln :SFC 1 "Checking not SFC for $($id) ($($_name)) with GRH = $GRH by projecting onto abelian and quaternionic parts"
+      @vprintln :SFC 1 "Checking not SFC for $($id) ($($_name)) by projecting onto abelian and quaternionic parts"
       if $id == (480, 960)
         @warn "This will take a while ..."
       end
@@ -224,9 +224,11 @@ push!(non_sfc_grp_ids, ((96, 188), "-"), ((100, 7), "-"))
 
 function check_96_188(; GRH = false)
   _id, _name = ((96, 188), "Ot x C2")
-  @vprintln :SFC 1 "Checking not SFC for $_id ($_name) with GRH = $GRH by projecting onto quotient order"
-  _, _, Gamma, _ = compute_relevant_orders(_id, (48, 48)) # 48, 48 = S4 x C2
-  t = @elapsed fl, = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; s1_method = :rigorous)
+  @vprintln :SFC 1 "Checking not SFC for $_id ($_name) by projecting onto quotient order"
+  t = @elapsed begin
+    _, _, Gamma, _ = compute_relevant_orders(_id, (48, 48)) # 48, 48 = S4 x C2
+    fl, = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; s1_method = :rigorous)
+  end
   @vprint :SFC "Time for $(_id): $t"
   @assert fl
   return true
@@ -234,7 +236,7 @@ end
 
 function check_100_7(; GRH = false)
   _id = (100, 7)
-  @vprintln :SFC 1 "Checking not SFC for $_id with GRH = $GRH by projecting onto a quotient order"
+  @vprintln :SFC 1 "Checking not SFC for $_id by projecting onto a quotient order"
   @v_do :SFC 1 Hecke.pushindent()
   # for 100, 7 we have to do something different
   G = small_group(100, 7)
@@ -259,10 +261,9 @@ end
 
 function check_480_960(; GRH = false)
   _id, _name = ((480, 960), "It x C2^2")
-  @vprintln :SFC 1 "Checking not SFC for $_id ($_name) with GRH = $GRH by projecting onto quotient order"
+  @vprintln :SFC 1 "Checking not SFC for $_id ($_name) by projecting onto quotient order"
   ZG = integral_group_ring(group_algebra(QQ, small_group(_id...)))
-  Gamma = canonical_quotient_order(ZG)
-  t = @elapsed fl, = TestingSFC.has_not_stably_free_cancellation_probably_no_split(Gamma; repetitions = 50)
+  t = @elapsed fl = !TestingSFC.sfc_of_canonical_quotient(ZG; GRH = GRH, method = :bj)
   @vprint :SFC "Time for $(_id): $t"
   @assert fl
   return true

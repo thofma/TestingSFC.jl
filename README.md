@@ -17,7 +17,7 @@ Note that this will also install [Oscar](https://github.com/oscar-system/Oscar.j
 
 
 > [!WARNING]  
-> All positive results, where $\mathbf{Z}[G]$ is claimed to have stably free cancellation, are subject to the condition that some (and therefore every) maximal order containing $\mathbf{Z}[G]$ has stably free cancellation. This is not checked by the algorithm. For the examples in the README and the paper, this is guaranteed by theory.
+> All positive results, where $\mathbf{Z}[G]$ is claimed to have stably free cancellation, are subject to the condition that every maximal order containing $\mathbf{Z}[G]$ has stably free cancellation. This is not checked by the algorithm. For the examples in the README and the paper, this is guaranteed by theory, specifically, by Corollary 4.6.
 
 The main functionality of the package is provided by the functions `has_SFC_naive` and `has_SFC`, which implement Algorithm 8.9 and Algorithm 10.3 (applied to the "Eichler splitting" of the algebra) respectively. Here is how one can use these functions to check that the integral group ring of the quaternion group of order $16$ has stably free cancellation. (In this case any maximal order has stably free cancellation by Corollary 4.6.)
 
@@ -38,6 +38,10 @@ julia> has_SFC(ZG)
 The following functions will run the algorithms which are part of the proofs from the paper. Note that the non-Magma version might take a very long time to finish for the groups of order >= 192.
 
 ```julia
+using TestingSFC
+# using MagmaGroups # uncomment this line for faster version using magma subroutines
+set_verbosity_level(:SFC, 1); # enables debug printing
+
 # Theorem 6.6
 check_48_32()
 
@@ -45,7 +49,7 @@ check_48_32()
 check_16_12()   # Q8 x C2
 check_24_7()    # Q12 x C2
 check_32_41()   # Q16 x C2
-check_40_7(),   # Q20 x C2
+check_40_7()    # Q20 x C2
 check_96_198()  # Tt x C2^2
 check_96_188()  # Ot x C2
 check_480_960() # It x C2^2
