@@ -3,6 +3,7 @@ export check_96_188
 export check_100_7
 export check_288_409
 export check_480_266
+export check_480_960
 export check_192_1022
 export check_96_66
 export check_240_94
@@ -190,7 +191,7 @@ non_sfc_grp_ids = [
          ((40, 7), "Q20 x C2"),
          ((96, 198), "Tt x C2^2"),
          #((96, 188), "Ot x C2") # separate, see below
-         ((480, 960), "It x C2^2"),
+         #((480, 960), "It x C2^2"),
          ((32, 14), "-"),
          ((36, 7), "-"),
          ((64, 14), "-"),
@@ -223,7 +224,7 @@ push!(non_sfc_grp_ids, ((96, 188), "-"), ((100, 7), "-"))
 
 function check_96_188(; GRH = false)
   _id, _name = ((96, 188), "Ot x C2")
-  @vprintln :SFC 1 "Checking not SFC for $_id ($_name)with GRH = $GRH by projecting onto quotient order"
+  @vprintln :SFC 1 "Checking not SFC for $_id ($_name) with GRH = $GRH by projecting onto quotient order"
   _, _, Gamma, _ = compute_relevant_orders(_id, (48, 48)) # 48, 48 = S4 x C2
   t = @elapsed fl, = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; s1_method = :rigorous)
   @vprint :SFC "Time for $(_id): $t"
@@ -254,6 +255,17 @@ function check_100_7(; GRH = false)
   @assert found
   @vprint :SFC "Time for $(_id): $t"
   @v_do :SFC 1 Hecke.popindent()
+end
+
+function check_480_960(; GRH = false)
+  _id, _name = ((480, 960), "It x C2^2")
+  @vprintln :SFC 1 "Checking not SFC for $_id ($_name) with GRH = $GRH by projecting onto quotient order"
+  ZG = integral_group_ring(group_algebra(QQ, small_group(_id...)))
+  Gamma = canonical_quotient_order(ZG)
+  t = @elapsed fl, = TestingSFC.has_not_stably_free_cancellation_probably_no_split(Gamma; repetitions = 50)
+  @vprint :SFC "Time for $(_id): $t"
+  @assert fl
+  return true
 end
 
 ################################################################################

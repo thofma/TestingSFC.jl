@@ -33,7 +33,7 @@ function is_locally_radical_with_adjustment(ML, f)
     f = Hecke._as_ideal_of_larger_algebra(ZtoA, newg, ML)
     return false, f
   else
-    @vprintln :SFC "Conductor is locally radical)"
+    @vprintln :SFC "Conductor is locally radical"
     return true, f
   end
 end
