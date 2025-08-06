@@ -31,6 +31,8 @@ julia> QG = group_algebra(QQ, dicyclic_group(16));
 julia> ZG = integral_group_ring(QG);
 
 julia> has_SFC(ZG)
+[...]
+true
 ```
  
 ## Proofs for the paper
