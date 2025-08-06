@@ -55,11 +55,11 @@ check_64_14()
 check_100_7()
 
 # Theorem 13.1
-check_288_409()  
-check_480_266()
+check_288_409()  # Tt x Q12
+check_480_266()  # Tt x Q20
 check_192_1022()
-check_96_66()
-check_240_94()
+check_96_66()    # Q8 sd Q12
+check_240_94()   # C2 x It
 check_192_183()
 check_384_580()
 check_480_962()

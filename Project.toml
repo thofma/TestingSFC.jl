@@ -1,6 +1,6 @@
 name = "TestingSFC"
 uuid = "928126d8-517c-4547-9366-53ef25125cdd"
-version = "0.1.9"
+version = "0.1.10"
 authors = ["Tommy Hofmann <thofma@gmail.com>"]
 
 [deps]
