@@ -176,6 +176,7 @@ function check_48_32(; GRH = false)
   U, = sub(parent(Ugens[1]), Ugens) 
   @assert order(U) == 3*2^17
   @vprintln :SFC 1 "Found U <= V with |U| = 3*2^17"
+  return true
 end
 
 ################################################################################
@@ -248,7 +249,7 @@ function check_100_7(; GRH = false)
   t = @elapsed for v in subsets(ind, 3)
     _, p = Hecke.product_of_components_with_projection(QG, v)
     Gamma = p(ZG)
-    fl = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; repetitions = 100, GRH = GRH)
+    fl, = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; repetitions = 100, GRH = GRH)
     if fl
       found = true
       break
@@ -257,6 +258,7 @@ function check_100_7(; GRH = false)
   @assert found
   @vprint :SFC "Time for $(_id): $t"
   @v_do :SFC 1 Hecke.popindent()
+  return true
 end
 
 function check_480_960(; GRH = false)
@@ -430,97 +432,66 @@ end
 #
 ################################################################################
 
+all_groups = [
+  (48,32),
+  (16,12),   # Q8 x C2
+  (24,7),    # Q12 x C2
+  (32,41),   # Q16 x C2
+  (40,7),    # Q20 x C2
+  (96,198),  # Tt x C2^2
+  (96,188),  # Ot x C2
+  (480,960), # It x C2^2
+  (32,14),
+  (36,7),
+  (64,14),
+  (100,7),
+  (288,409),  # Tt x Q12
+  (480,266),  # Tt x Q20
+  (192,1022),
+  (96,66),    # Q8 sd Q12
+  (240,94),   # C2 x It
+  (192,183),
+  (384,580),
+  (480,962),
+]
+
 function _all_centers()
-  res = [];
-  #
-  @vprintln :SFC 1 "24, 3"
-  G = small_group(24, 3)
-  QG = QQ[G]
-  C, = center(QG)
-  push!(res, ("24, 3", first.(Hecke._as_number_fields(C))))
-
-  #
-  @vprintln :SFC 1 "48, 32"
-  G = small_group(48, 32)
-  QG = QQ[G]
-  C, = center(QG)
-  push!(res, ("48, 32", first.(Hecke._as_number_fields(C))))
-
-  #
-  for (_id, _) in non_sfc_grp_ids
-    @vprintln :SFC 1 "$_id"
-    G = small_group(_id...)
-    QG = QQ[G]
-    C, = center(QG)
-    push!(res, ("($_id)", first.(Hecke._as_number_fields(C))))
+  flds = []
+  for id in all_groups
+    @vprintln :SFC 1 "Computing character fields for $id"
+    X = character_table(small_group(id...))
+    for chi in X
+      K, = character_field(chi)
+      push!(flds, K)
+    end
   end
- 
-  #
-  @vprintln :SFC 1 "288 409"
-  ZG, ZH, Gamma, ZHC2 = compute_relevant_orders((288, 409), (144, 127))
-  QG = algebra(ZG)
-  C, = center(QG)
-  push!(res, ("288, 409", first.(Hecke._as_number_fields(C))))
-  QHC2 = algebra(ZHC2)
-  C, = center(QHC2)
-  push!(res, ("144, 127 x C2", first.(Hecke._as_number_fields(C))))
+  flds2 = []
+  @vprintln :SFC 1 " Sieving the fields"
+  for K in flds
+    if any(x -> is_isomorphic(x, K)[1], flds2)
+      continue
+    else
+      push!(flds2, K)
+    end
+  end
+  @vprintln :SFC 1 describe.(flds2)
+  Qx, x = QQ[:x]
+  polys = change_base_ring.(Ref(QQ), defining_polynomial.(flds); parent = Qx)
+  return flds2
+end
 
-  #
-  @vprintln :SFC 1 "480, 266"
-  ZG, ZH, Gamma, ZHC2 = compute_relevant_orders((480, 266), (240, 108))
-  QG = algebra(ZG)
-  C, = center(QG)
-  push!(res, ("480, 266", first.(Hecke._as_number_fields(C))))
-  QHC2 = algebra(ZHC2)
-  C, = center(QHC2)
-  push!(res, ("244, 108 x C2", first.(Hecke._as_number_fields(C))))
-  
-  #
-  @vprintln :SFC 1 "192, 1022"
-  G, HtoG = find_group_and_subgroup((192, 1022), (96, 204))
-  QG = QQ[G]
-  C, = center(QG)
-  push!(res, ("192, 1022", first.(Hecke._as_number_fields(C))))
- 
-  #
-  @vprintln :SFC 1 "96 66"
-  ZG, ZH, Gamma, ZHC2 = compute_relevant_orders((96, 66), (48, 29))
-  QG = algebra(ZG)
-  C, = center(QG)
-  push!(res, ("96, 66", first.(Hecke._as_number_fields(C))))
-  QHC2 = algebra(ZHC2)
-  C, = center(QHC2)
-  push!(res, ("48, 29 x C2", first.(Hecke._as_number_fields(C))))
-  
-  #
-  @vprintln :SFC 1 "240, 94"
-  ZG, ZH, Gamma, ZHC2 = compute_relevant_orders((240, 94), (120, 35))
-  QG = algebra(ZG)
-  C, = center(QG)
-  push!(res, ("240, 94", first.(Hecke._as_number_fields(C))))
-  QHC2 = algebra(ZHC2)
-  C, = center(QHC2)
-  push!(res, ("120, 35 x C2", first.(Hecke._as_number_fields(C))))
-
-  #
-  @vprintln :SFC 1  "192, 183"
-  G, HtoG = find_group_and_subgroup((192, 183), (96, 66))
-  QG = QQ[G]
-  C, = center(QG)
-  push!(res, ("192, 183", first.(Hecke._as_number_fields(C))))
- 
-  #
-  @vprintln :SFC 1  "384, 580"
-  G, HtoG =find_group_and_subgroup((384, 580), (192, 183))
-  QG = QQ[G]
-  C, = center(QG)
-  push!(res, ("384, 580", first.(Hecke._as_number_fields(C))))
-
-  #
-  @vprintln :SFC 1  "480 962"
-  G, HtoG = find_group_and_subgroup((480, 962), (96, 66))
-  QG = QQ[G]
-  C, = center(QG)
-  push!(res, ("480, 962", first.(Hecke._as_number_fields(C))))
-  return res
+function describe(K::AbsSimpleNumField)
+  K, = simplify(K)
+  if degree(K) == 1
+    return "Q"
+  end
+  if degree(K) == 2
+    d = Hecke.squarefree_part(discriminant(maximal_order(K)))
+    return "Q(sqrt($d))"
+  end
+  fl, m = is_cyclotomic_polynomial_with_data(defining_polynomial(K))
+  if fl
+    return "Q(zeta_$m)"
+  end
+  return "nothing fancy"
 end
