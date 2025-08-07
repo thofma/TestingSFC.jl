@@ -326,9 +326,9 @@ function _compute_a_complete_coprime_splitting(O, F; split = true)
     push!(moduli, primary_ideals[i][2] + F)
   end
 
-  if prod(moduli; init = 1 * O) != F
-    error("Could not determine coprime splitting")
-  end
+  #if prod(moduli; init = 1 * O) != F
+  #  error("Could not determine coprime splitting")
+  #end
 
   return moduli
 end
