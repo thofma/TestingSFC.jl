@@ -163,19 +163,23 @@ end
 ################################################################################
 
 function check_48_32(; GRH = false)
-  CZG, CZH, CZHC2, CGamma, _, _, _, Gamma = compute_class_group_orders((48, 32), (24, 3); GRH)
-  G = small_group(24, 3) # \tilde{T}
-  Tt = G
-  QG = QQ[G]
-  ZG = integral_group_ring(QG)
-  ZTt = ZG
-  u = _cyclic_units(ZTt)
-  Q, ZTttoQ = quo(ZTt, 2*ZTt)
-  _, mU = unit_group_quotient_matrices(default_group_type(), Q)
-  Ugens = [image(mU, ZTttoQ(u)) for u in u]
-  U, = sub(parent(Ugens[1]), Ugens) 
-  @assert order(U) == 3*2^17
-  @vprintln :SFC 1 "Found U <= V with |U| = 3*2^17"
+  id = (48, 32)
+  t = @elapsed begin
+    CZG, CZH, CZHC2, CGamma, _, _, _, Gamma = compute_class_group_orders((48, 32), (24, 3); GRH)
+    G = small_group(24, 3) # \tilde{T}
+    Tt = G
+    QG = QQ[G]
+    ZG = integral_group_ring(QG)
+    ZTt = ZG
+    u = _cyclic_units(ZTt)
+    Q, ZTttoQ = quo(ZTt, 2*ZTt)
+    _, mU = unit_group_quotient_matrices(default_group_type(), Q)
+    Ugens = [image(mU, ZTttoQ(u)) for u in u]
+    U, = sub(parent(Ugens[1]), Ugens) 
+    @assert order(U) == 3*2^17
+    @vprintln :SFC 1 "Found U <= V with |U| = 3*2^17"
+  end
+  @vprintln :SFC "Time for $(id): $t"
   return true
 end
 
@@ -192,7 +196,7 @@ non_sfc_grp_ids = [
          ((40, 7), "Q20 x C2"),
          ((96, 198), "Tt x C2^2"),
          #((96, 188), "Ot x C2") # separate, see below
-         #((480, 960), "It x C2^2"),
+         #((480, 960), "It x C2^2"), separate, see below
          ((32, 14), "-"),
          ((36, 7), "-"),
          ((64, 14), "-"),
@@ -230,7 +234,7 @@ function check_96_188(; GRH = false)
     _, _, Gamma, _ = compute_relevant_orders(_id, (48, 48)) # 48, 48 = S4 x C2
     fl, = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; s1_method = :rigorous)
   end
-  @vprint :SFC "Time for $(_id): $t"
+  @vprintln :SFC "Time for $(_id): $t"
   @assert fl
   return true
 end
@@ -249,6 +253,7 @@ function check_100_7(; GRH = false)
   t = @elapsed for v in subsets(ind, 3)
     _, p = Hecke.product_of_components_with_projection(QG, v)
     Gamma = p(ZG)
+    @vprintln :SFC 1 "Degree of quotient: $(degree(Gamma))"
     fl, = TestingSFC.has_not_stably_free_cancellation_probably(Gamma; repetitions = 100, GRH = GRH)
     if fl
       found = true
@@ -256,7 +261,7 @@ function check_100_7(; GRH = false)
     end
   end
   @assert found
-  @vprint :SFC "Time for $(_id): $t"
+  @vprintln :SFC "Time for $(_id): $t"
   @v_do :SFC 1 Hecke.popindent()
   return true
 end
@@ -266,7 +271,7 @@ function check_480_960(; GRH = false)
   @vprintln :SFC 1 "Checking not SFC for $_id ($_name) by projecting onto quotient order"
   ZG = integral_group_ring(group_algebra(QQ, small_group(_id...)))
   t = @elapsed fl = !TestingSFC.sfc_of_canonical_quotient(ZG; GRH = GRH, method = :bj)
-  @vprint :SFC "Time for $(_id): $t"
+  @vprintln :SFC "Time for $(_id): $t"
   @assert fl
   return true
 end
