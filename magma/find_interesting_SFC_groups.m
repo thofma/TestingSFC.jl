@@ -6,7 +6,7 @@ known whether the integral group ring Z[G] has SFC or not. */
 Currently, this contains all finite groups of size up to 2000, excluding those of order 1024.*/  
 
 min_group_size := 1;
-max_group_size := 2000;  /* Currently should be at most 2000. */
+max_group_size := 1023;  /* Currently should be at most 2000. */
 
 /* IMPORTANT: groups of order 512, 1024, 1152, 1536, or 1920 will automatically be skipped because groups of order 1024 are not included 
 in the small groups database and because the IdentifyGroup function does not currently work for groups of order 512, 1152, 1536, or 1920. 
