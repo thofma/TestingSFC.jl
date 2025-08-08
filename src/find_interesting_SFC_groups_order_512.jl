@@ -6,11 +6,12 @@
 # This implementation is only for groups of order 512. See separate program for groups of other orders. Note that the other program
 # is more informative because in this program we can skip many of the checks. 
 
-# The follwing are finite groups G of 2-power order such that Z[G] fails SFC by Theorem 9.4.
-
 export find_interesting_groups_512
 
 function find_interesting_groups_512()
+
+# The follwing are finite groups G of 2-power order such that Z[G] fails SFC by Theorem 9.4.
+  
   without_sfc =
   [
   (16,12), (32,14), (32,41), (64,14)
@@ -48,7 +49,7 @@ function find_interesting_groups_512()
       end
     end
     # If quat_count le 1 then Z[G] has SFC by Theorem 4.13 due to Nicholson.
-    # Thus it remains to consider the case quat_count ge 2.
+    # Thus it remains to consider the case quat_count >= 2.
     if quat_count >= 2
       has_fail_quotient = false
       has_sfc = false
