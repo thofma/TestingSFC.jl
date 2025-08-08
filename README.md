@@ -19,7 +19,7 @@ Note that this will also install [Oscar](https://github.com/oscar-system/Oscar.j
 > [!WARNING]  
 > All positive results, where $\mathbf{Z}[G]$ is claimed to have stably free cancellation, are subject to the condition that every maximal order containing $\mathbf{Z}[G]$ has stably free cancellation. This is not checked by the algorithm. For the examples in the README and the paper, this is guaranteed by theory, specifically, by Corollary 4.6.
 
-The main functionality of the package is provided by the functions `has_SFC_naive` and `has_SFC`, which implement Algorithm 8.9 and Algorithm 10.3 (applied to the "Eichler splitting" of the algebra) respectively. Here is how one can use these functions to check that the integral group ring of the quaternion group of order $16$ has stably free cancellation. (In this case any maximal order has stably free cancellation by Corollary 4.6.)
+The main functionality of the package is provided by the functions `has_SFC_naive` and `has_SFC`, which implement Algorithm 8.9 and Algorithm 10.3 (applied to the "Eichler splitting" of the algebra) respectively. Here is how one can use these functions to check that the integral group ring of the quaternion group of order $16$ has stably free cancellation. (In this case every maximal order has stably free cancellation by Corollary 4.6.)
 
 ```julia
 julia> using TestingSFC
