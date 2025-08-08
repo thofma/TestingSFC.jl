@@ -24,7 +24,7 @@ The main functionality of the package is provided by the functions `has_SFC_naiv
 ```julia
 julia> using TestingSFC
 
-julia>  # using MagmaGroups # uncomment this line for faster version of some functions using magma subroutines
+julia> #using MagmaGroups # uncomment this line for faster version of some functions using magma subroutines
 
 julia> set_verbosity_level(:SFC, 1); # enables debug printing
 
