@@ -94,3 +94,17 @@ julia> reduction(F)
 [...]
 true
 ```
+
+## Finding interesting groups
+
+The repository also contains the code used to determine the groups in Theorem 13.4. The Magma version can be found under
+```
+magma/find_interesting_SFC_groups.m
+magma/find_interesting_SFC_groups_order_512.m
+```
+
+The Oscar version becomes accesible by executing `using TestingSFC` and calling the functions
+```julia
+find_interesting_groups
+find_interesting_groups_512
+```
