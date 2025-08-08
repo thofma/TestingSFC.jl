@@ -101,6 +101,8 @@ include("Naive.jl")
 include("TestLattices.jl")
 include("PIP.jl")
 include("Paper.jl")
+include("find_interesting_SFC_groups_order_512.jl")
+include("find_interesting_SFC_groups.jl")
 
 export has_SFC
 export has_SFC_naive
