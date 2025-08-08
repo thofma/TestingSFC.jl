@@ -114,7 +114,7 @@ For further information, see comments in source code.
 The Oscar version can be run as follows. 
 ```julia
 using TestingSFC
-find_interesting_groups(1,1023)
+find_interesting_groups
 find_interesting_groups_512
 ```
 As with the magma versions, these will take a long time to finish. For further information, see comments in source code.
