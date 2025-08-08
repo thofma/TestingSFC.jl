@@ -22,7 +22,9 @@ Note that this will also install [Oscar](https://github.com/oscar-system/Oscar.j
 The main functionality of the package is provided by the functions `has_SFC_naive` and `has_SFC`, which implement Algorithm 8.9 and Algorithm 10.3 (applied to the "Eichler splitting" of the algebra) respectively. Here is how one can use these functions to check that the integral group ring of the quaternion group of order $16$ has stably free cancellation. (In this case any maximal order has stably free cancellation by Corollary 4.6.)
 
 ```julia
-julia> using TestingSFC # replace by `using TestingSFC, MagmaGroups` for faster version using magma subrountines
+julia> using TestingSFC
+
+julia>  # using MagmaGroups # uncomment this line for faster version of some functions using magma subroutines
 
 julia> set_verbosity_level(:SFC, 1); # enables debug printing
 
@@ -41,7 +43,6 @@ The following functions will run the algorithms which are part of the proofs fro
 
 ```julia
 using TestingSFC
-# using MagmaGroups # uncomment this line for faster version using magma subroutines
 set_verbosity_level(:SFC, 1); # enables debug printing
 
 # Theorem 6.6
@@ -60,6 +61,9 @@ check_36_7()
 check_64_14()
 check_100_7()
 
+# using MagmaGroups # uncomment this line for faster versions of the following functions using magma subroutines; for several of the functions, this is necessary in practice
+# WARNING: some of the following functions require large amounts of RAM to finish (hundreds of gigabytes)
+
 # Theorem 13.1
 check_288_409()  # Tt x Q12
 check_480_266()  # Tt x Q20
@@ -76,7 +80,9 @@ check_480_962()
 A normal subgroup induces a fiber product for the integral group ring, see Section 6.1 of the paper. Assuming that one of the rings in the corner satisfies the Eichler condition, the stably free cancellation property can be reduced to the other corner using the function `reduction`:
 
 ```julia
-julia> using TestingSFC # replace by `using TestingSFC, MagmaGroups` for faster version using magma subrountines
+julia> using TestingSFC
+
+julia> # using MagmaGroups # uncomment this line for faster version using magma subroutines
 
 julia> set_verbosity_level(:SFC, 1); # enables debug printing
 
