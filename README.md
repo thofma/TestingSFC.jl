@@ -108,9 +108,13 @@ The repository also contains the code used to determine the groups in Theorem 13
 magma/find_interesting_SFC_groups.m
 magma/find_interesting_SFC_groups_order_512.m
 ```
+Note that the first of these will take over a day to finish and the second over a week.
+For further information, see comments in source code.
 
-The Oscar version becomes accesible by executing `using TestingSFC` and calling the functions
+The Oscar version can be run as follows. 
 ```julia
-find_interesting_groups
+using TestingSFC
+find_interesting_groups(1,1023)
 find_interesting_groups_512
 ```
+As with the magma versions, these will take a long time to finish. For further information, see comments in source code.
