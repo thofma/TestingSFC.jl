@@ -2,8 +2,14 @@
 # by Werner Bley, Tommy Hofmann and Henri Johnston. It searches the small groups database for finite groups G for which it is not 
 # known whether the integral group ring Z[G] has SFC or not.
 # 
-# The following two parameters set the range of orders of groups to search. Of course, this is limited by the small groups database.
-# Currently, this contains all finite groups of size up to 2000, excluding those of order 1024.
+# The parameters min_group_size and max_group_size set the range of orders of groups to search. Of course, this is limited by 
+# the small groups database. Currently, this contains all finite groups of size up to 2000, excluding those of order 1024.
+#
+# IMPORTANT: groups of order 512, 1024, 1152, 1536, or 1920 will automatically be skipped because groups of order 1024 are not included 
+# in the small groups database and because the small_group_identification function does not currently work for groups of order 512, 1152, 
+# 1536, or 1920. These orders are picked out by the function has_small_group_identification.
+
+# Note that Theorem 13.4 only considers groups of size at most 1023. See separate julia program that searches groups of order 512. */
 
 export find_interesting_groups
 
@@ -129,11 +135,6 @@ function find_interesting_groups_with_order(n, with_sfc, without_sfc)
 end
 
 function find_interesting_groups(min_group_size = 1, max_group_size = 2000)
-  # IMPORTANT: groups of order 512, 1024, 1152, 1536, or 1920 will automatically be skipped because groups of order 1024 are not included 
-  # in the small groups database and because the IdentifyGroup function does not currently work for groups of order 512, 1152, 1536, or 1920. 
-  # These orders are picked out by the function CanIdentifyGroup.
-
-  # Note that Theorem 13.4 only considers groups of size at most 1023. See separate julia program that searches groups of order 512. */
 
   without_sfc = compute_without_sfc(min_group_size, max_group_size)
 
