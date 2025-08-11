@@ -37,7 +37,7 @@ true
 ```
 
 > [!WARNING]  
-> Some of the functions that show that a particular integral group ring $\mathbf{Z}[G]$ does have SFC require large amounts of RAM (hundreds of gigabytes).  
+> Some of the functions that show that an integral group ring $\mathbf{Z}[G]$ does have SFC require large amounts of RAM (hundreds of gigabytes). 
  
 ## Proofs for the paper
 
