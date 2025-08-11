@@ -15,7 +15,6 @@ Note that this will also install [Oscar](https://github.com/oscar-system/Oscar.j
 
 ## Usage
 
-
 > [!WARNING]  
 > All positive results, where $\mathbf{Z}[G]$ is claimed to have stably free cancellation, are subject to the condition that every maximal order containing $\mathbf{Z}[G]$ has stably free cancellation. This is not checked by the algorithm. For the examples in the README and the paper, this is guaranteed by theory, specifically, by Corollary 4.6.
 
@@ -36,10 +35,13 @@ julia> has_SFC(ZG)
 [...]
 true
 ```
+
+> [!WARNING]  
+> Some of the functions that show that a particular integral group ring $\mathbf{Z}[G]$ does have SFC require large amounts of RAM (hundreds of gigabytes).  
  
 ## Proofs for the paper
 
-The following functions will run the algorithms which are part of the proofs from the paper. Note that the non-Magma version might take a very long time to finish for the groups of order >= 192.
+The following functions will run the algorithms which are part of the proofs from the paper. Note that the non-Magma version might take a very long time to finish for the groups of order >= 192. Indeed, in many cases the magma version is necessary in practice.
 
 ```julia
 using TestingSFC
