@@ -36,12 +36,13 @@ julia> has_SFC(ZG)
 true
 ```
 
-> [!WARNING]  
-> Some of the functions that show that an integral group ring $\mathbf{Z}[G]$ does have SFC require large amounts of RAM (hundreds of gigabytes). 
  
 ## Proofs for the paper
 
-The following functions will run the algorithms which are part of the proofs from the paper. Note that the non-Magma version might take a very long time to finish for the groups of order >= 192. Indeed, in many cases the magma version is necessary in practice.
+The following functions will run the algorithms which are part of the proofs from the paper. 
+
+> [!WARNING]  
+> Some of the functions that show that an integral group ring $\mathbf{Z}[G]$ does have SFC require large amounts of RAM (hundreds of gigabytes). Moreover, the non-Magma version might take a very long time to finish for the groups of order >= 192. Indeed, in many cases the magma version is necessary in practice.
 
 ```julia
 using TestingSFC
