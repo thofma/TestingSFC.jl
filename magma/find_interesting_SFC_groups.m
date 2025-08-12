@@ -118,9 +118,9 @@ for n in [min_group_size..max_group_size] do
 					end if;
 					/* The following outputs groups G for which the above checks have not determined whether 
 					Z[G] has SFC or not. */
-          if not(has_fail_quotient) and not(has_sfc) then
-            print n,j;
-          end if;
+          	if not(has_fail_quotient) and not(has_sfc) then
+            	print n,j;
+          	end if;
 				end if;
 			end if;
 		end for;
