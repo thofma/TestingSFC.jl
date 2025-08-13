@@ -5,14 +5,22 @@
 ################################################################################
 
 # Mainly for debugging purposes
-function _test_lattice(O::Hecke.AlgAssAbsOrd, beta, f)
-  b = elem_in_algebra(beta)
-  binv = inv(b)
-  primes = prime_divisors(numerator(det(Hecke.basis_matrix_wrt(f, O))))
-  Y = binv * O
-  X = lattice_with_local_conditions(O, primes, [Y for i in 1:length(primes)])
-  I = b * X
+function _test_lattice(O::Hecke.AlgAssAbsOrd, beta, f; check = true)
   M = parent(beta)
+  I = intersect(beta * M, 1*O)
+  #@assert I * M == beta * M
+  #@assert I + f == 1 * O
+  if check
+    b = elem_in_algebra(beta)
+    binv = inv(b)
+    primes = prime_divisors(numerator(det(Hecke.basis_matrix_wrt(f, O))))
+    #@info primes
+    Y = binv * O
+    X = lattice_with_local_conditions(O, primes, [Y for i in 1:length(primes)])
+    II = b * X
+    #@assert II * M ==  beta * M
+    @assert I == b * X
+  end
   return I
 end
 
