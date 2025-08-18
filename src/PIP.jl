@@ -38,7 +38,11 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
   non_unit = 0
 
   @vprintln :SFC 3 "Factoring f"
-  splitf = _compute_a_complete_coprime_splitting(R, f)
+  if degree(R) > 100
+    splitf = _compute_a_complete_coprime_splitting(R, f)
+  else
+    splitf = [f]
+  end
   splitf2 = [F.p2(h) for h in splitf]
   _Kelems = []
   @vprintln :SFC 3 "Decomposing the map R/f -> R_2/f_2 using CRT"
@@ -58,13 +62,14 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
   local to_final_quo
 
   local_elts = Vector{elem_type(R)}(undef, length(splitf))
-  @vprintln :SFC 3 "Compute idempotents for CRT"
+  @vprintln :SFC 3 "Compute idempotents for CRT ($(length(splitf)) many ideals)"
   idems = Vector{elem_type(R)}(undef, length(splitf))
   for i in 1:length(splitf)
     _elts = [zero(R) for j in 1:length(splitf)]
     _elts[i] = one(R)
     idems[i] = crt(_elts, splitf)
   end
+  @vprintln :SFC 3 "Now computing random elements in the kernel"
 
   while true
     if cnt % 100 == 0

@@ -219,11 +219,13 @@ function _has_valid_first_component(F::FiberProductOrder, a2)
   el = R([c.coeff[i] for i in 1:degree(R)])
 
   cnt = 0
+  b = 10
   while !is_unit(RtoQ(el))
-    el = el + R(dot(rand(-10:10, length(K)), K))
+    el = el + R(dot(rand(-b:b, length(K)), K))
     cnt += 1
-    if cnt >= 15000
-      error("Asdsdds")
+    if cnt % 10000 == 0
+      @vprintln :SFC 3 "Increasing randomization parameter to $(b + 1) in Step 4(a) of Algorithm 12.5"
+      b += 1
     end
   end
 
