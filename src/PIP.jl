@@ -37,38 +37,8 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
   cur_gens = elem_type(QU)[]
   non_unit = 0
 
-  @vprintln :SFC 3 "Factoring f"
-  if degree(R) > 100
-    splitf = _compute_a_complete_coprime_splitting(R, f)
-  else
-    splitf = [f]
-  end
-  splitf2 = [F.p2(h) for h in splitf]
-  _Kelems = []
-  @vprintln :SFC 3 "Decomposing the map R/f -> R_2/f_2 using CRT"
-  for (_f, _h) in zip(splitf, splitf2)
-    _Q, _RtoQ = quo(R, _f)
-    @assert _h * F.R2 == _h
-    _Q2, _R2toQ2 = quo(F.R2, _h * F.R2)
-    # create Q -> Q2
-    _QA, _QAtoQ, _QtoQA = abelian_group(_Q)
-    _Q2A, _Q2AtoQ2, _Q2toQ2A = abelian_group(_Q2)
-    _ff = hom(_QA, _Q2A, [_Q2toQ2A(_R2toQ2(F.R2(F.p2(elem_in_algebra(preimage(_RtoQ, _QAtoQ(a))))))) for a in gens(_QA)])
-    _KK, _KKtoQA = kernel(ff)
-    _Kelements = preimage.(RtoQ, QAtoQ.(KKtoQA.(gens(KK))))
-    push!(_Kelems, (_Kelements, _RtoQ))
-  end
-
-  local to_final_quo
-
-  local_elts = Vector{elem_type(R)}(undef, length(splitf))
-  @vprintln :SFC 3 "Compute idempotents for CRT ($(length(splitf)) many ideals)"
-  idems = Vector{elem_type(R)}(undef, length(splitf))
-  for i in 1:length(splitf)
-    _elts = [zero(R) for j in 1:length(splitf)]
-    _elts[i] = one(R)
-    idems[i] = crt(_elts, splitf)
-  end
+  _Kelems, idems = _preimage_to_R2_helper(F)
+  local_elts = Vector{elem_type(R)}(undef, length(idems))
   @vprintln :SFC 3 "Now computing random elements in the kernel"
 
   while true
@@ -80,14 +50,14 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
       #@info "Order stable for $(stabilize) new elements"
       break
     end
-    for i in 1:length(splitf)
+    for i in 1:length(_Kelems)
       _cnt = 1
       while true
         if _cnt % 100 == 0
           @vprintln :SFC 3 "Hard to find proper unit at position $(i) ($(_cnt) tries)"
         end
         _cnt += 1
-        _el = one(R) + mod(R(dot(rand(-1000:1000, length(_Kelems[i][1])), _Kelems[i][1])), splitf[i])
+        _el = one(R) + mod(R(dot(rand(-1000:1000, length(_Kelems[i][1])), _Kelems[i][1])), _Kelems[i][3])
         if is_unit(_Kelems[i][2](_el))
           local_elts[i] = _el
           break
@@ -95,7 +65,7 @@ function _s1_gens_heuristic(R, F = fiber_product_from_eichler_splitting(R); stab
       end
     end
     #el = crt(local_elts, splitf)
-    el = sum(idems[i] * local_elts[i] for i in 1:length(splitf))
+    el = sum(idems[i] * local_elts[i] for i in 1:length(idems))
     #@assert el - el2 in f
     #el = one(R) + R(dot(rand(-100:100, length(Kelements)), Kelements))
     cnt += 1
@@ -190,26 +160,10 @@ function _s1_method(R, beta, F = fiber_product_from_eichler_splitting(R); s1_met
   beta1 = F.p1(beta)
 
   cnt = 0
-  for k in 1:100
-    t = rand(T2)
-    a2 = t * beta2inv
-    cnt += 1
-    if cnt % 10^(max(min(2, clog(length(T2), 10) - 1), 0)) == 0
-      #@info "cnt: $cnt (T2)"
-    end
-    fl, b1 = _has_valid_first_component(F, a2)
-    if fl
-      el = to_final_quo(QUtoQ\(OCtoQ(OC(Hecke.normred_over_center(b1 * beta1, ZtoA1)))))
-      fll, _ = has_preimage_with_preimage(subtofinal_quo, el)
-      if fll
-        return fll
-      end
-    end
-  end
-
   for t in T2
     a2 = t * beta2inv
     cnt += 1
+    @vprintln :SFC 4 "cnt: $cnt/$(length(T2))"
     if cnt % 10^(min(4, clog(length(T2), 10) - 1)) == 0
       @v_do :SFC 2 pushindent()
       @vprintln :SFC 2 "cnt: $cnt (T2)"

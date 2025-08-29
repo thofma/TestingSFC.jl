@@ -192,6 +192,84 @@ end
 #
 ################################################################################
 
+function _batch_crt(r1, i1, r2, i2)
+  u, v = idempotents(i1, i2)
+  return [r1[i]*v + r2[i]*u for i in 1:length(r1)]
+end
+
+function _batch_crt(a, I)
+  @assert length(a) == length(I)
+  if length(I) == 1
+    r = [x[1] for x in a]
+    @assert length(r) == length(a[1])
+    return r
+  end
+  if length(I) == 2
+    r = _batch_crt(a[1], I[1], a[2], I[2])
+    @assert length(r) == length(a[1])
+    return r
+  end
+  A = [_batch_crt(a[2*i-1], I[2*i-1], a[2*i], I[2*i]) for i=1:div(length(I), 2)]
+  B = [I[2*i-1]*I[2*i] for i=1:div(length(I), 2)]
+  @assert length(A) == length(B)
+  if isodd(length(I))
+    push!(A, a[end])
+    #push!(A, a[end])
+    push!(B, I[end])
+  end
+  r =  _batch_crt(A, B)
+  @assert length(r) == length(a[1])
+  return r
+end
+
+function _idems(R, I)
+  l = length(I)
+  M = identity_matrix(R, l)
+  es = _batch_crt([M[:, i] for i in 1:l], I)
+  for i in 1:l
+    for j in 1:l
+      if i != j
+        @assert es[i] in I[j]
+      else
+        @assert es[i] - one(R) in I[j]
+      end
+    end
+  end
+  return es
+end
+
+@attr function _preimage_to_R2_helper(F)
+  @vprintln :SFC 3 "Computing additional data to help finding preimages"
+  f = F.f
+  R = F.R
+  if degree(R) > 0 # always
+    @vprintln :SFC 3 "Factoring f"
+    splitf = _compute_a_complete_coprime_splitting(R, f)
+  else
+    splitf = [f]
+  end
+  splitf2 = [F.p2(h) for h in splitf]
+  _Kelems = []
+  @vprintln :SFC 3 "Decomposing the map R/f -> R_2/f_2 using CRT"
+  for (_f, _h) in zip(splitf, splitf2)
+    _Q, _RtoQ = quo(R, _f)
+    @assert _h * F.R2 == _h
+    _Q2, _R2toQ2 = quo(F.R2, _h * F.R2)
+    # create Q -> Q2
+    _QA, _QAtoQ, _QtoQA = abelian_group(_Q)
+    _Q2A, _Q2AtoQ2, _Q2toQ2A = abelian_group(_Q2)
+    _ff = hom(_QA, _Q2A, [_Q2toQ2A(_R2toQ2(F.R2(F.p2(elem_in_algebra(preimage(_RtoQ, _QAtoQ(a))))))) for a in gens(_QA)])
+    _KK, _KKtoQA = kernel(_ff)
+    _Kelements = preimage.(_RtoQ, _QAtoQ.(_KKtoQA.(gens(_KK))))
+    push!(_Kelems, (_Kelements, _RtoQ, _f, _h))
+  end
+
+  # compute idempotents
+  @vprintln :SFC 3 "Computing idempotents"
+  idems = _idems(R, splitf)
+  return _Kelems, idems
+end
+
 # M = maximal order
 # R = order
 # f = two-sided ideal
@@ -200,6 +278,7 @@ end
 # p1 = A -> A1
 # p2 = A -> A2
 function _has_valid_first_component(F::FiberProductOrder, a2)
+  @vprintln :SFC 4 "Check if element has valid first component"
   @assert parent(a2) === algebra(F.R2)
   M2 = F.M2
   R = F.R
@@ -216,18 +295,34 @@ function _has_valid_first_component(F::FiberProductOrder, a2)
     return false, zero(codomain(F.p1))
   end
 
+  @vprintln :SFC 4 "Preimage is not a unit modulo f. Adjusting ..."
+
   el = R([c.coeff[i] for i in 1:degree(R)])
 
-  cnt = 0
-  b = 10
+  _Kelems, idems = _preimage_to_R2_helper(F)
+  local_elts = Vector{elem_type(R)}(undef, length(idems))
+
   while !is_unit(RtoQ(el))
-    el = el + R(dot(rand(-b:b, length(K)), K))
-    cnt += 1
-    if cnt % 10000 == 0
-      @vprintln :SFC 3 "Increasing randomization parameter to $(b + 1) in Step 4(a) of Algorithm 12.5"
-      b += 1
+    local_elts = [_Kelems[i][2](el) for i in 1:length(idems)]
+    # el -> R/f_1 x ... R/f_r
+    for i in 1:length(idems)
+      if !is_unit(local_elts[i])
+        @vprintln :SFC 4 "Preimage is not a unit modulo f_$(i). Adjusting ..."
+        cnt = 0
+        b = 10
+        local_elts[i] = local_elts[i] + _Kelems[i][2](R(dot(rand(-b:b, length(_Kelems[i][1])), _Kelems[i][1])))
+        cnt += 1
+        if cnt % 10000 == 0
+          @vprintln :SFC 4 "Increasing randomization parameter to $(b + 1) in Step 4(a) of Algorithm 12.5"
+          b += 1
+        end
+      end
     end
+    @vprintln :SFC 4 "Reconstructing element ..."
+    el = sum(idems[i] * local_elts[i].elem for i in 1:length(idems))
+    @assert (F.p2(elem_in_algebra(el)) - a2) in F.f2
   end
+  @vprintln :SFC 4 "Found a good preimage"
 
   b1 = F.p1(elem_in_algebra(el))
   #@assert b1 in F.M1
