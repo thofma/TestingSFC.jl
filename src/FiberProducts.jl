@@ -306,7 +306,7 @@ function _has_valid_first_component(F::FiberProductOrder, a2)
     local_elts = [_Kelems[i][2](el) for i in 1:length(idems)]
     # el -> R/f_1 x ... R/f_r
     for i in 1:length(idems)
-      if !is_unit(local_elts[i])
+      while !is_unit(local_elts[i])
         @vprintln :SFC 4 "Preimage is not a unit modulo f_$(i). Adjusting ..."
         cnt = 0
         b = 10
